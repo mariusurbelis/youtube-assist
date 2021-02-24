@@ -1,4 +1,5 @@
-# youtube-assist
+# YouTube Assist
+A tool to help YouTube content creators improve consistency, visualize and manage their uploads.
 
 ## Project setup
 ```
