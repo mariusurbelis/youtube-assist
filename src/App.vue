@@ -10,16 +10,16 @@
         <component v-bind:is="authcomponent" />
 
         <div class="fixed-bottom row text-center justify-content-center" style="height: 4em;">
-            <button class="col-2" v-on:click="openDashboardScreen">
+            <button class="col-3" v-on:click="openDashboardScreen">
                 Dashboard
             </button>
-            <button class="col-2" v-on:click="openNewVideoScreen">
+            <button class="col-3" v-on:click="openNewVideoScreen">
                 New Video
             </button>
-            <button class="col-2" v-on:click="openNewVideoScreen">
+            <button class="col-3" v-on:click="openKanbanScreen">
                 Kanban
             </button>
-            <button class="col-2" v-on:click="openVideoListScreen">
+            <button class="col-3" v-on:click="openVideoListScreen">
                 Video List
             </button>
         </div>
@@ -33,6 +33,7 @@ import VideoScreen from "./components/VideoScreen";
 import DatabaseManager from "./classes/DatabaseManager";
 import AuthScreen from "./components/AuthScreen";
 import { EventBus } from "./main";
+import Kanban from './components/Kanban.vue';
 
 require("./classes/YouTubeAPI");
 
@@ -43,7 +44,8 @@ export default {
         VideoList,
         VideoScreen,
         AuthScreen,
-        DatabaseManager
+        DatabaseManager,
+        Kanban
     },
     data() {
         return {
@@ -70,6 +72,9 @@ export default {
         },
         openVideoScreen() {
             this.component = VideoScreen;
+        },
+        openKanbanScreen() {
+            this.component = Kanban;
         },
         openNewVideoScreen() {
             this.component = VideoScreen;

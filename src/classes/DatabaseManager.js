@@ -55,6 +55,30 @@ export default class DatabaseManager {
         return videoList;
     }
 
+    getAllVideosOfStatus(status) {
+        var videoList = new Array();
+
+        fs.readdir(this.videoDataFolder, (err, files) => {
+            files.forEach(file => {
+                fs.readFile(`${this.videoDataFolder}/${file}`, (err, data) => {
+                    if (err) throw err;
+                    let videoData = JSON.parse(data);
+
+                    if (videoData.status === status) {
+                        // console.log(`Found a video ${videoData.title}`);
+                        videoList.push(videoData);
+                    }
+                });
+            });
+
+            if (err) {
+                console.log("Error loading dir");
+            }
+        });
+
+        return videoList;
+    }
+
     // Refactor
     getVideoByID(id) {
         return new Promise((resolve, reject) => {
@@ -109,7 +133,7 @@ export default class DatabaseManager {
                         "File does not exists and was not created during the timeout."
                     )
                 );
-            }, 10000);
+            }, 100000);
 
             fs.access(filePath, fs.constants.R_OK, function(err) {
                 if (!err) {

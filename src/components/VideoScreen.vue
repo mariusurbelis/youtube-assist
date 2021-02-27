@@ -77,7 +77,7 @@
 
         <div class="row mt-3">
             <div class="col-12">
-                <button class="col-4" v-on:click="saveData">Save</button>
+                <button class="btn btn-primary col-4" v-on:click="saveData">Save</button>
             </div>
         </div>
     </div>
@@ -104,6 +104,7 @@ export default {
                 title: "",
                 description: "",
                 tags: "",
+                status: 0,
                 created: Date.now()
             };
         });
@@ -114,6 +115,7 @@ export default {
                 .then((video) => {
                     this.video = video;
                     if (typeof this.video.created === 'undefined') this.video.created = Date.now();
+                    if (typeof this.video.status === 'undefined') this.video.status = 0;
                 })
                 .catch((err) => {
                     console.log(`Error loading the video data ${err}`);

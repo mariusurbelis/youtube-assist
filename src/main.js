@@ -7,8 +7,8 @@ Vue.config.productionTip = false;
 
 export const EventBus = new Vue(); // added line
 const DB = new DatabaseManager();
-export { DB };
-
+const VideoStatus = ["Idea", "In Progress", "Scheduled", "Published"];
+export { DB, VideoStatus };
 DB.initializeFolders();
 
 // Import the styles directly. (Or you could add them via script tags.)
@@ -24,6 +24,9 @@ new Vue({
 // GLOBAL METHODS
 Vue.mixin({
     methods: {
+        videoStatus(id) {
+            return VideoStatus[id];
+        },
         timeConverter(timestamp) {
             var a = new Date(timestamp);
             var months = [

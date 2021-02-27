@@ -29,7 +29,10 @@
                 </button>
             </div>
             <div class="col-6">
-                Created:<br>{{ timeConverter(video.created) }}
+                Created:<br />{{ timeConverter(video.created) }}
+            </div>
+            <div class="col-6">
+                Status:<br />{{ videoStatus(video.status) }}
             </div>
         </div>
     </div>
