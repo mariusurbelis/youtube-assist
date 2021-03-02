@@ -5,8 +5,12 @@
         </div>
 
         <div class="row text-center">
-            <div class="col-12" v-for="video in videos" v-bind:key="video.id">
-                <p>{{ video.snippet.title }} Views: {{ video.statistics.viewCount }}</p>
+            <div
+                class="col-4 mb-3"
+                v-for="video in videos"
+                v-bind:key="video.id"
+            >
+                <VideoInfoCard :video="video" />
             </div>
         </div>
     </div>
@@ -14,8 +18,12 @@
 
 <script>
 import { DB } from "../main";
+import VideoInfoCard from "./VideoInfoCard";
 
 export default {
+    components: {
+        VideoInfoCard
+    },
     data() {
         return {
             videos: null
