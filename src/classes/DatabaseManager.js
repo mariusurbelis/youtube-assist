@@ -185,6 +185,36 @@ export default class DatabaseManager {
         return `${this.videoDataFolder}/${id}.json`;
     }
 
+    getVideoByDate(date) {
+        return new Promise((resolve, reject) => {
+            // console.log(`Getting by date ${date}`);
+
+            try {
+                this.loadDataFromFile(`${this.apiDataFolder}/latest.json`).then(
+                    data => {
+                        data.forEach(video => {
+                            var dateObj = new Date(video.snippet.publishedAt);
+                            var month = (
+                                "0" +
+                                (dateObj.getUTCMonth() + 1)
+                            ).slice(-2); //months from 1-12
+                            var day = ("0" + dateObj.getUTCDate()).slice(-2);
+                            var year = dateObj.getUTCFullYear();
+
+                            var videoDate = year + "-" + month + "-" + day;
+
+                            if (date === videoDate) {
+                                resolve(video);
+                            }
+                        });
+                    }
+                );
+            } catch {
+                reject();
+            }
+        });
+    }
+
     initializeFolders() {
         if (!fs.existsSync(this.dataFolder)) fs.mkdirSync(this.dataFolder);
         if (!fs.existsSync(this.videoDataFolder))

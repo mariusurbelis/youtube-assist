@@ -12,7 +12,7 @@ var SCOPES = ["https://www.googleapis.com/auth/youtube.readonly"];
 var TOKEN_DIR = `${userHome}/Documents/YouTube Assist/`;
 var TOKEN_PATH = TOKEN_DIR + "auth.json";
 
-console.log("YouTube API Script Initiated");
+// console.log("YouTube API Script Initiated");
 // storeToken(`4/1AY0e-g5AuwbltTcI52Yom5wFGlBCo_GV86n9Zohsd7WNuBeH3xQfWTG5oHI`);
 
 // Load client secrets from a local file.
@@ -38,7 +38,7 @@ function authorize(credentials, callback) {
     var redirectUrl = credentials.installed.redirect_uris[0];
     var oauth2Client = new OAuth2(clientId, clientSecret, redirectUrl);
 
-    console.log(TOKEN_PATH);
+    // console.log(TOKEN_PATH);
 
     // Check if we have previously stored a token.
     readFile(TOKEN_PATH, function(err, token) {
@@ -161,11 +161,11 @@ function getPlaylist(auth, playListIDQuery) {
             auth: auth,
             part: "contentDetails,status",
             playlistId: playListIDQuery,
-            maxResults: 10
+            maxResults: 30
             // mine: true
         },
         function(err, response) {
-            console.log(`Looking for ${playListIDQuery}`);
+            // console.log(`Looking for ${playListIDQuery}`);
 
             if (err) {
                 console.log("The API returned an error: " + err);
@@ -178,6 +178,7 @@ function getPlaylist(auth, playListIDQuery) {
                 // console.log(`Playlist: ${playlist}`);
                 DB.saveYouTubeData(playlist, "uploads");
                 getLatestVideos(auth, playlist);
+                getScheduledVideos(auth, playlist);
             }
         }
     );
@@ -187,7 +188,7 @@ function getLatestVideos(auth, playlist) {
     var videoIDs = "";
 
     playlist.forEach(videoElement => {
-        console.log(videoElement.contentDetails.videoId);
+        // console.log(videoElement.contentDetails.videoId);
         if (videoElement.status.privacyStatus === "public")
             videoIDs += `${videoElement.contentDetails.videoId},`;
     });
@@ -201,7 +202,7 @@ function getLatestVideos(auth, playlist) {
             // mine: true
         },
         function(err, response) {
-            console.log(`Looking for ${playlist[0].contentDetails.videoId}`);
+            // console.log(`Looking for ${playlist[0].contentDetails.videoId}`);
 
             if (err) {
                 console.log("The API returned an error: " + err);
@@ -225,6 +226,53 @@ function getLatestVideos(auth, playlist) {
                 //console.log(sampleArray);
 
                 DB.saveYouTubeData(latest, "latest");
+            }
+        }
+    );
+}
+
+function getScheduledVideos(auth, playlist) {
+    var videoIDs = "";
+
+    playlist.forEach(videoElement => {
+        // console.log(videoElement.contentDetails.videoId);
+        if (videoElement.status.privacyStatus === "private")
+            videoIDs += `${videoElement.contentDetails.videoId},`;
+    });
+
+    var service = google.youtube("v3");
+    service.videos.list(
+        {
+            auth: auth,
+            part: "snippet,statistics",
+            id: videoIDs
+            // mine: true
+        },
+        function(err, response) {
+            // console.log(`Looking for ${playlist[0].contentDetails.videoId}`);
+
+            if (err) {
+                console.log("The API returned an error: " + err);
+                return;
+            }
+            var scheduled = response.data.items;
+            if (scheduled === null) {
+                console.log("No video found.");
+            } else {
+                // console.log(`Playlist: ${playlist}`);
+
+                var index;
+                while (
+                    (index = scheduled.findIndex(
+                        a => a.snippet.liveBroadcastContent !== "none"
+                    )) >= 0
+                ) {
+                    if (index > -1) scheduled.splice(index, 1);
+                }
+
+                //console.log(sampleArray);
+
+                DB.saveYouTubeData(scheduled, "scheduled");
             }
         }
     );

@@ -9,16 +9,25 @@
 
         <component v-bind:is="authcomponent" />
 
-        <div class="fixed-bottom row text-center justify-content-center" style="height: 4em;">
+        <div class="container-fluid mt-5">
+            <div class="row">
+                <div class="col-12">
+                    <CalendarMonth />
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="fixed-bottom row text-center justify-content-center"
+            style="height: 4em"
+        >
             <button class="col-3" v-on:click="openDashboardScreen">
                 Dashboard
             </button>
             <button class="col-3" v-on:click="openNewVideoScreen">
                 New Video
             </button>
-            <button class="col-3" v-on:click="openKanbanScreen">
-                Kanban
-            </button>
+            <button class="col-3" v-on:click="openKanbanScreen">Kanban</button>
             <button class="col-3" v-on:click="openVideoListScreen">
                 Video List
             </button>
@@ -33,7 +42,8 @@ import VideoScreen from "./components/VideoScreen";
 import DatabaseManager from "./classes/DatabaseManager";
 import AuthScreen from "./components/AuthScreen";
 import { EventBus } from "./main";
-import Kanban from './components/Kanban.vue';
+import Kanban from "./components/Kanban.vue";
+import CalendarMonth from "./components/calendar/CalendarMonth";
 
 require("./classes/YouTubeAPI");
 
@@ -45,7 +55,8 @@ export default {
         VideoScreen,
         AuthScreen,
         DatabaseManager,
-        Kanban
+        Kanban,
+        CalendarMonth
     },
     data() {
         return {

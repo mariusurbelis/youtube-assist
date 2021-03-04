@@ -1,23 +1,23 @@
 <template>
     <div class="container">
         <div class="row">
-            <div class="shadow p-4 col-12 mb-5 rounded-lg">
+            <div class="shadow-sm p-4 col-12 mb-5 rounded-lg">
                 <h1>Dashboard</h1>
             </div>
         </div>
 
         <div class="row mb-5">
-            <div class="col-6">
-                <StatsOverview class="p-3 shadow rounded-lg" />
+            <div class="col-8">
+                <StatsOverview class="p-3 shadow-sm rounded-lg" />
             </div>
-            <div class="col-6">
-                <ClosestScheduledVideo class="p-4 shadow rounded-lg" />
+            <div class="col-4">
+                <ClosestScheduledVideo class="p-4 shadow-sm rounded-lg" />
             </div>
         </div>
 
         <div class="row">
             <div class="col-12">
-                <LastVideos class="p-4 shadow rounded-lg" />
+                <LastVideos class="p-4 shadow-sm rounded-lg" />
             </div>
         </div>
     </div>
