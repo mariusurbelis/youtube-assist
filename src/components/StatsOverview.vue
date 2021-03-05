@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { DB } from "../main";
+import { EventBus, DB } from "../main";
 
 export default {
     data() {
@@ -47,14 +47,27 @@ export default {
         this.stats = { id: "" };
     },
     created() {
-        DB.loadDataFromFile(`${DB.apiDataFolder}/channel_data.json`).then(
-            (loadedData) => {
-                this.stats = loadedData;
-                this.subscriberCount = this.stats.statistics.subscriberCount;
-                this.videoCount = this.stats.statistics.videoCount;
-                this.viewCount = this.stats.statistics.viewCount;
-            }
-        );
+        this.loadData();
+
+        EventBus.$on("reloadData", this.loadData);
+    },
+
+    beforeDestroy() {
+        EventBus.$off("reloadData", this.loadData);
+    },
+
+    methods: {
+        loadData() {
+            DB.loadDataFromFile(`${DB.apiDataFolder}/channel_data.json`).then(
+                (loadedData) => {
+                    this.stats = loadedData;
+                    this.subscriberCount = this.stats.statistics.subscriberCount;
+                    this.videoCount = this.stats.statistics.videoCount;
+                    this.viewCount = this.stats.statistics.viewCount;
+                    console.log(`Loading stats`);
+                }
+            );
+        }
     }
 };
 </script>

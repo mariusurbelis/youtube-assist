@@ -105,23 +105,31 @@ export default class DatabaseManager {
     }
 
     saveYouTubeChannelData(data) {
-        fs.writeFile(
-            `${this.apiDataFolder}/channel_data.json`,
-            JSON.stringify(data),
-            function(err) {
-                if (err) throw err;
-            }
-        );
+        return new Promise((resolve, reject) => {
+            fs.writeFile(
+                `${this.apiDataFolder}/channel_data.json`,
+                JSON.stringify(data),
+                function(err) {
+                    if (err) reject(err);
+                    console.log(`WRITTEN channel_data`);
+                    resolve();
+                }
+            );
+        });
     }
 
     saveYouTubeData(data, fileName) {
-        fs.writeFile(
-            `${this.apiDataFolder}/${fileName}.json`,
-            JSON.stringify(data),
-            function(err) {
-                if (err) throw err;
-            }
-        );
+        return new Promise((resolve, reject) => {
+            fs.writeFile(
+                `${this.apiDataFolder}/${fileName}.json`,
+                JSON.stringify(data),
+                function(err) {
+                    if (err) reject(err);
+                    console.log(`WRITTEN ${fileName}`);
+                    resolve();
+                }
+            );
+        });
     }
 
     loadDataFromFile(filePath) {

@@ -17,9 +17,20 @@
                     />
                 </div>
             </div>
-            <div class="row align-items-center pr-2 pl-2 pt-1 pb-1" style="font-size: 0.7em">
-                <div class="col-8 text-left">
-                    {{ truncateString(video.snippet.title, 20) }}
+            <div
+                class="row align-items-center pr-2 pl-2 pt-1 pb-1"
+                style="font-size: 0.7em"
+            >
+                <div
+                    style="
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 2;
+                        overflow: hidden;
+                    "
+                    class="col-8 text-left"
+                >
+                    {{ video.snippet.title }}
                 </div>
                 <div class="col-4 text-right">
                     {{ video.statistics.viewCount }}
@@ -27,16 +38,14 @@
             </div>
         </div>
         <div v-else>
-            <div v-if="isToday">
-                No video yet
-            </div>
+            <div v-if="isToday">No video yet</div>
         </div>
     </li>
 </template>
 
 <script>
 import dayjs from "dayjs";
-import { DB } from "../../main";
+import { EventBus, DB } from "../../main";
 
 export default {
     name: "CalendarMonthDayItem",
@@ -72,13 +81,19 @@ export default {
     },
 
     created() {
-        this.getVideoOfDay();
+        this.loadData();
+        EventBus.$on("reloadData", this.loadData);
+    },
+
+    beforeDestroy() {
+        EventBus.$off("reloadData", this.loadData);
     },
 
     methods: {
-        getVideoOfDay() {
+        loadData() {
             DB.getVideoByDate(this.day.date).then((returnedVideo) => {
                 this.video = returnedVideo;
+                console.log("Loading calendar vid");
             });
         }
     }
@@ -89,9 +104,7 @@ export default {
 .calendar-day {
     position: relative;
     min-height: 100px;
-    font-size: 16px;
     background-color: #fff;
-    color: var(--grey-800);
     padding: 5px;
 }
 
@@ -101,13 +114,11 @@ export default {
     align-items: center;
     position: relative;
     /* right: 2px; */
-    width: var(--day-label-size);
-    height: var(--day-label-size);
 }
 
 .calendar-day--not-current {
-    background-color: var(--grey-100);
-    color: var(--grey-300);
+    color: #aaaaaa;
+    background-color: #dddddd;
 }
 
 .calendar-day--today {

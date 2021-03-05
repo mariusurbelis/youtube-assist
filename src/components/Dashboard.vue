@@ -1,6 +1,6 @@
 <template>
-    <div class="container">
-        <div class="row">
+    <div class="container mb-5">
+        <div hidden class="row">
             <div class="shadow-sm p-4 col-12 mb-5 rounded-lg">
                 <h1>Dashboard</h1>
             </div>
@@ -15,9 +15,15 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row mb-5">
             <div class="col-12">
                 <LastVideos class="p-4 shadow-sm rounded-lg" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <CalendarMonth class="shadow-sm rounded-lg p-4" />
             </div>
         </div>
     </div>
@@ -27,13 +33,15 @@
 import StatsOverview from "./StatsOverview";
 import ClosestScheduledVideo from "./ClosestScheduledVideo";
 import LastVideos from "./LastVideos";
+import CalendarMonth from "./calendar/CalendarMonth";
 
 export default {
     name: "App",
     components: {
         StatsOverview,
         ClosestScheduledVideo,
-        LastVideos
+        LastVideos,
+        CalendarMonth
     }
 };
 </script>

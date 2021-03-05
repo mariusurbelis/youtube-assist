@@ -15,15 +15,7 @@ var TOKEN_PATH = TOKEN_DIR + "auth.json";
 // console.log("YouTube API Script Initiated");
 // storeToken(`4/1AY0e-g5AuwbltTcI52Yom5wFGlBCo_GV86n9Zohsd7WNuBeH3xQfWTG5oHI`);
 
-// Load client secrets from a local file.
-readFile("client_secret.json", function processClientSecrets(err, content) {
-    if (err) {
-        console.log("Error loading client secret file: " + err);
-        return;
-    }
-    // Authorize a client with the loaded credentials, then call the YouTube API.
-    authorize(JSON.parse(content), getChannel);
-});
+pullDataFromAPI();
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -40,6 +32,14 @@ function authorize(credentials, callback) {
 
     // console.log(TOKEN_PATH);
 
+    EventBus.$on("singleFileWriteFinished", () => {
+        fileWritesLeft--;
+
+        if (fileWritesLeft === 0) {
+            dataLoadFinished();
+        }
+    });
+
     // Check if we have previously stored a token.
     readFile(TOKEN_PATH, function(err, token) {
         if (err) {
@@ -49,6 +49,25 @@ function authorize(credentials, callback) {
             EventBus.$emit("authSuccess");
             callback(oauth2Client);
         }
+    });
+}
+
+var fileWritesLeft = 4;
+
+function dataLoadFinished() {
+    console.log("File writes are done");
+    fileWritesLeft = 4;
+    EventBus.$emit("reloadData");
+}
+
+function pullDataFromAPI() {
+    readFile("client_secret.json", function processClientSecrets(err, content) {
+        if (err) {
+            console.log("Error loading client secret file: " + err);
+            return;
+        }
+        // Authorize a client with the loaded credentials, then call the YouTube API.
+        authorize(JSON.parse(content), getChannel);
     });
 }
 
@@ -144,7 +163,10 @@ function getChannel(auth) {
                 console.log("No channel found.");
             } else {
                 // console.log(`Channel ID: ${channels[0].id}`);
-                DB.saveYouTubeChannelData(channels[0]);
+                DB.saveYouTubeChannelData(channels[0]).then(() => {
+                    EventBus.$emit("singleFileWriteFinished");
+                });
+
                 getPlaylist(
                     auth,
                     channels[0].contentDetails.relatedPlaylists.uploads
@@ -176,9 +198,11 @@ function getPlaylist(auth, playListIDQuery) {
                 console.log("No playlist found.");
             } else {
                 // console.log(`Playlist: ${playlist}`);
-                DB.saveYouTubeData(playlist, "uploads");
-                getLatestVideos(auth, playlist);
+                DB.saveYouTubeData(playlist, "uploads").then(() => {
+                    EventBus.$emit("singleFileWriteFinished");
+                });
                 getScheduledVideos(auth, playlist);
+                getLatestVideos(auth, playlist);
             }
         }
     );
@@ -225,7 +249,9 @@ function getLatestVideos(auth, playlist) {
 
                 //console.log(sampleArray);
 
-                DB.saveYouTubeData(latest, "latest");
+                DB.saveYouTubeData(latest, "latest").then(() => {
+                    EventBus.$emit("singleFileWriteFinished");
+                });
             }
         }
     );
@@ -272,7 +298,9 @@ function getScheduledVideos(auth, playlist) {
 
                 //console.log(sampleArray);
 
-                DB.saveYouTubeData(scheduled, "scheduled");
+                DB.saveYouTubeData(scheduled, "scheduled").then(() => {
+                    EventBus.$emit("singleFileWriteFinished");
+                });
             }
         }
     );

@@ -4,18 +4,10 @@
         <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
         <!-- <Dashboard /> -->
         <keep-alive>
-            <component v-bind:is="component" />
+            <component v-if="!authcomponent" v-bind:is="component" />
         </keep-alive>
 
         <component v-bind:is="authcomponent" />
-
-        <div class="container-fluid mt-5">
-            <div class="row">
-                <div class="col-12">
-                    <CalendarMonth />
-                </div>
-            </div>
-        </div>
 
         <div
             class="fixed-bottom row text-center justify-content-center"
@@ -43,7 +35,6 @@ import DatabaseManager from "./classes/DatabaseManager";
 import AuthScreen from "./components/AuthScreen";
 import { EventBus } from "./main";
 import Kanban from "./components/Kanban.vue";
-import CalendarMonth from "./components/calendar/CalendarMonth";
 
 require("./classes/YouTubeAPI");
 
@@ -55,8 +46,7 @@ export default {
         VideoScreen,
         AuthScreen,
         DatabaseManager,
-        Kanban,
-        CalendarMonth
+        Kanban
     },
     data() {
         return {
@@ -93,6 +83,7 @@ export default {
         },
         openDashboardScreen() {
             this.component = Dashboard;
+            EventBus.$emit("reloadData");
         },
         initializeComponents() {
             this.$nextTick(() => {

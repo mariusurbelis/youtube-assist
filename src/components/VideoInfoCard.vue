@@ -1,8 +1,16 @@
 <template>
     <div class="bg-white shadow-sm rounded-lg p-4">
         <div class="row">
-            <div class="col-12 shadow-sm p-2">
-                <div>{{ truncateString(video.snippet.title, 32) }}</div>
+            <div
+                style="
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 1;
+                    overflow: hidden;
+                "
+                class="col-12 shadow-sm p-2"
+            >
+                <div>{{ video.snippet.title }}</div>
             </div>
         </div>
 
