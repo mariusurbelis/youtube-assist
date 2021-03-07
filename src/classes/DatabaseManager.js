@@ -111,7 +111,6 @@ export default class DatabaseManager {
                 JSON.stringify(data),
                 function(err) {
                     if (err) reject(err);
-                    console.log(`WRITTEN channel_data`);
                     resolve();
                 }
             );
@@ -125,7 +124,6 @@ export default class DatabaseManager {
                 JSON.stringify(data),
                 function(err) {
                     if (err) reject(err);
-                    console.log(`WRITTEN ${fileName}`);
                     resolve();
                 }
             );

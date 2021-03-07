@@ -56,7 +56,7 @@ export default {
             ]
         };
     },
-    created() {
+    created() { // TODO: doesn't reload when opened
         this.loadVideoList();
     },
     methods: {

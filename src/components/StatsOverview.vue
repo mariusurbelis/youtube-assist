@@ -64,7 +64,7 @@ export default {
                     this.subscriberCount = this.stats.statistics.subscriberCount;
                     this.videoCount = this.stats.statistics.videoCount;
                     this.viewCount = this.stats.statistics.viewCount;
-                    console.log(`Loading stats`);
+                    // console.log(`Loading stats`);
                 }
             );
         }

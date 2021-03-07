@@ -70,7 +70,7 @@ export default {
             DB.loadDataFromFile(`${DB.apiDataFolder}/latest.json`).then(
                 (loadedData) => {
                     this.videos = loadedData;
-                    console.log("Loading last videos list");
+                    // console.log("Loading last videos list");
                 }
             );
         }

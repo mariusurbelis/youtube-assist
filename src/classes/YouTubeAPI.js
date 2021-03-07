@@ -4,11 +4,15 @@ import { google } from "googleapis";
 // import { trimEnd } from "user-home";
 import { EventBus, DB } from "../main";
 const userHome = require("user-home");
+const fs = require("fs");
 var OAuth2 = google.auth.OAuth2;
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/youtube-nodejs-quickstart.json
-var SCOPES = ["https://www.googleapis.com/auth/youtube.readonly"];
+var SCOPES = [
+    "https://www.googleapis.com/auth/youtube.readonly",
+    "https://www.googleapis.com/auth/youtube.upload"
+];
 var TOKEN_DIR = `${userHome}/Documents/YouTube Assist/`;
 var TOKEN_PATH = TOKEN_DIR + "auth.json";
 
@@ -16,6 +20,19 @@ var TOKEN_PATH = TOKEN_DIR + "auth.json";
 // storeToken(`4/1AY0e-g5AuwbltTcI52Yom5wFGlBCo_GV86n9Zohsd7WNuBeH3xQfWTG5oHI`);
 
 pullDataFromAPI();
+
+var minutes = 1,
+    the_interval = minutes * 60 * 1000;
+setInterval(function() {
+    if (!uploadingVideo) {
+        console.log(`Refreshing API data every ${minutes} minutes`);
+        pullDataFromAPI();
+    }
+}, the_interval);
+
+var fileWritesLeft = 4;
+var uploadsInitialized = false;
+var uploadingVideo = false;
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -28,18 +45,18 @@ function authorize(credentials, callback) {
     var clientSecret = credentials.installed.client_secret;
     var clientId = credentials.installed.client_id;
     var redirectUrl = credentials.installed.redirect_uris[0];
+
     var oauth2Client = new OAuth2(clientId, clientSecret, redirectUrl);
 
     // console.log(TOKEN_PATH);
 
-    EventBus.$on("singleFileWriteFinished", () => {
-        fileWritesLeft--;
-
-        if (fileWritesLeft === 0) {
-            dataLoadFinished();
-        }
-    });
-
+    if (!uploadsInitialized) {
+        EventBus.$on("uploadVideo", video => {
+            sendVideoForUpload(video);
+        });
+        console.log("Initializing uploads");
+        uploadsInitialized = true;
+    }
     // Check if we have previously stored a token.
     readFile(TOKEN_PATH, function(err, token) {
         if (err) {
@@ -52,13 +69,49 @@ function authorize(credentials, callback) {
     });
 }
 
-var fileWritesLeft = 4;
+function authorizeUpload(credentials, callback, video) {
+    var clientSecret = credentials.installed.client_secret;
+    var clientId = credentials.installed.client_id;
+    var redirectUrl = credentials.installed.redirect_uris[0];
+
+    var oauth2Client = new OAuth2(clientId, clientSecret, redirectUrl);
+
+    // console.log(TOKEN_PATH);
+
+    if (!uploadsInitialized) {
+        EventBus.$on("uploadVideo", video => {
+            sendVideoForUpload(video);
+        });
+        uploadsInitialized = true;
+    }
+    // Check if we have previously stored a token.
+    readFile(TOKEN_PATH, function(err, token) {
+        if (err) {
+            getNewToken(oauth2Client, callback);
+        } else {
+            oauth2Client.credentials = JSON.parse(token);
+            EventBus.$emit("authSuccess");
+            callback();
+            uploadVideo(oauth2Client, video);
+        }
+    });
+}
+
+function handleSingleFileWriteFinished() {
+    fileWritesLeft--;
+
+    if (fileWritesLeft === 0) {
+        dataLoadFinished();
+        fileWritesLeft = 4;
+    }
+}
 
 function dataLoadFinished() {
     console.log("File writes are done");
-    fileWritesLeft = 4;
     EventBus.$emit("reloadData");
 }
+
+var clientSecret = null;
 
 function pullDataFromAPI() {
     readFile("client_secret.json", function processClientSecrets(err, content) {
@@ -66,9 +119,19 @@ function pullDataFromAPI() {
             console.log("Error loading client secret file: " + err);
             return;
         }
+        clientSecret = JSON.parse(content);
         // Authorize a client with the loaded credentials, then call the YouTube API.
         authorize(JSON.parse(content), getChannel);
     });
+}
+
+function videoUploadAuthorized() {
+    console.log("Video upload authorized");
+}
+
+function sendVideoForUpload(video) {
+    console.log("Sending video for upload");
+    authorizeUpload(clientSecret, videoUploadAuthorized, video);
 }
 
 /**
@@ -140,6 +203,75 @@ function storeToken(token) {
     });
 }
 
+function getFilesize(filename) {
+    var stats = fs.statSync(filename);
+    var fileSizeInBytes = stats.size;
+    return fileSizeInBytes / 1000000;
+}
+
+/**
+ * Upload the video file.
+ *
+ * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+ */
+function uploadVideo(auth, video) {
+    const service = google.youtube("v3");
+
+    console.log(`Uploading ${video.filePath}`);
+    console.log(fs.createReadStream(video.filePath));
+
+    console.log(`Video file size ${getFilesize(video.filePath)} MB`);
+    console.log(`Thumbnail file size ${getFilesize(video.thumbnailPath)} MB`);
+
+    uploadingVideo = true;
+    service.videos.insert(
+        {
+            auth: auth,
+            part: "snippet,status",
+            requestBody: {
+                snippet: {
+                    title: video.title,
+                    description: video.description,
+                    tags: video.tags,
+                    categoryId: 22, // People & Blogs
+                    defaultLanguage: "en",
+                    defaultAudioLanguage: "en"
+                },
+                status: {
+                    privacyStatus: "private"
+                }
+            },
+            media: {
+                body: fs.createReadStream(video.filePath)
+            }
+        },
+        function(err, response) {
+            if (err) {
+                console.log("The API returned an error: " + err);
+                return;
+            }
+            console.log(response.data);
+            console.log("Video uploaded. Uploading the thumbnail now.");
+            service.thumbnails.set(
+                {
+                    auth: auth,
+                    videoId: response.data.id,
+                    media: {
+                        body: fs.createReadStream(video.thumbnailPath)
+                    }
+                },
+                function(err, response) {
+                    if (err) {
+                        console.log("The API returned an error: " + err);
+                        return;
+                    }
+                    console.log(response.data);
+                }
+            );
+        }
+    );
+}
+
 /**
  * Lists the names and IDs of up to 10 files.
  *
@@ -163,9 +295,9 @@ function getChannel(auth) {
                 console.log("No channel found.");
             } else {
                 // console.log(`Channel ID: ${channels[0].id}`);
-                DB.saveYouTubeChannelData(channels[0]).then(() => {
-                    EventBus.$emit("singleFileWriteFinished");
-                });
+                DB.saveYouTubeChannelData(channels[0]).then(
+                    handleSingleFileWriteFinished
+                );
 
                 getPlaylist(
                     auth,
@@ -198,9 +330,9 @@ function getPlaylist(auth, playListIDQuery) {
                 console.log("No playlist found.");
             } else {
                 // console.log(`Playlist: ${playlist}`);
-                DB.saveYouTubeData(playlist, "uploads").then(() => {
-                    EventBus.$emit("singleFileWriteFinished");
-                });
+                DB.saveYouTubeData(playlist, "uploads").then(
+                    handleSingleFileWriteFinished
+                );
                 getScheduledVideos(auth, playlist);
                 getLatestVideos(auth, playlist);
             }
@@ -249,9 +381,9 @@ function getLatestVideos(auth, playlist) {
 
                 //console.log(sampleArray);
 
-                DB.saveYouTubeData(latest, "latest").then(() => {
-                    EventBus.$emit("singleFileWriteFinished");
-                });
+                DB.saveYouTubeData(latest, "latest").then(
+                    handleSingleFileWriteFinished
+                );
             }
         }
     );
@@ -298,9 +430,9 @@ function getScheduledVideos(auth, playlist) {
 
                 //console.log(sampleArray);
 
-                DB.saveYouTubeData(scheduled, "scheduled").then(() => {
-                    EventBus.$emit("singleFileWriteFinished");
-                });
+                DB.saveYouTubeData(scheduled, "scheduled").then(
+                    handleSingleFileWriteFinished
+                );
             }
         }
     );

@@ -3,7 +3,8 @@
         class="calendar-day"
         :class="{
             'calendar-day--not-current': !day.isCurrentMonth,
-            'calendar-day--today': isToday
+            'calendar-day--today': isToday,
+            'calendar-day--today--video': video !== null && isToday
         }"
     >
         <span>{{ label }}</span>
@@ -93,7 +94,7 @@ export default {
         loadData() {
             DB.getVideoByDate(this.day.date).then((returnedVideo) => {
                 this.video = returnedVideo;
-                console.log("Loading calendar vid");
+                // console.log("Loading calendar vid");
             });
         }
     }
@@ -128,7 +129,16 @@ export default {
 .calendar-day--today > span {
     color: #fff;
     /* border-radius: 9999px; */
-    background: gray;
+    background: red;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: 1px;
+}
+
+.calendar-day--today--video > span {
+    color: #fff;
+    /* border-radius: 9999px; */
+    background: green;
     padding-left: 5px;
     padding-right: 5px;
     margin-top: 1px;

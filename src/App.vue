@@ -85,7 +85,7 @@ export default {
             this.component = Dashboard;
             EventBus.$emit("reloadData");
         },
-        initializeComponents() {
+        initializeComponents() { // components do not get initialized
             this.$nextTick(() => {
                 this.component = VideoList;
                 this.$nextTick(() => {
