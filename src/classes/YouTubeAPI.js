@@ -17,7 +17,6 @@ var TOKEN_DIR = `${userHome}/Documents/YouTube Assist/`;
 var TOKEN_PATH = TOKEN_DIR + "auth.json";
 
 // console.log("YouTube API Script Initiated");
-// storeToken(`4/1AY0e-g5AuwbltTcI52Yom5wFGlBCo_GV86n9Zohsd7WNuBeH3xQfWTG5oHI`);
 
 pullDataFromAPI();
 
@@ -169,19 +168,6 @@ function getNewToken(oauth2Client, callback) {
             callback(oauth2Client);
         });
     });
-
-    // rl.question("Enter the code from that page here: ", function(code) {
-    //     rl.close();
-    //     oauth2Client.getToken(code, function(err, token) {
-    //         if (err) {
-    //             console.log("Error while trying to retrieve access token", err);
-    //             return;
-    //         }
-    //         oauth2Client.credentials = token;
-    //         storeToken(token);
-    //         callback(oauth2Client);
-    //     });
-    // });
 }
 
 /**
