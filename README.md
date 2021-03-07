@@ -1,25 +1,32 @@
 # YouTube Assist
-A tool to help YouTube content creators improve consistency, visualize and manage their uploads.
+
+A tool to help YouTube content creators improve consistency, visualize and manage their uploads. While streamlining the process from recording an idea to publishing a video.
 
 ## Project setup
+
 ```
 npm install
 ```
+Vue CLI required
+```
+npm install -g @vue/cli
+```
 
 ### Compiles and hot-reloads for development
+
 ```
-npm run serve
+npm run electron:serve
 ```
 
 ### Compiles and minifies for production
-```
-npm run build
-```
 
-### Lints and fixes files
 ```
-npm run lint
+npm run electron:build --win nsis
 ```
 
 ### Customize configuration
+
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### YouTube Assist
+More info about the project will be available at [urbelis.dev/youtube-assist](https://urbelis.dev/youtube-assist/)

@@ -81,6 +81,7 @@
                 {{ video.thumbnailPath }}
             </div>
         </div>
+        <img :src="video.thumbnailPath" style="width: 100%" />
 
         <div class="row">
             <div class="col-6">
