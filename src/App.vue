@@ -11,7 +11,7 @@
 
         <div
             class="fixed-bottom row text-center justify-content-center"
-            style="height: 4em"
+            style="height: 3em"
         >
             <button class="col-3" v-on:click="openDashboardScreen">
                 Dashboard
@@ -85,7 +85,8 @@ export default {
             this.component = Dashboard;
             EventBus.$emit("reloadData");
         },
-        initializeComponents() { // components do not get initialized
+        initializeComponents() {
+            // components do not get initialized
             this.$nextTick(() => {
                 this.component = VideoList;
                 this.$nextTick(() => {

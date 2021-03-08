@@ -1,5 +1,5 @@
 <template>
-    <div v-if="defined" class="container p-0">
+    <div v-if="videos" class="container p-0">
         <div class="row">
             <div class="col-12 shadow-sm p-1 mb-2">Scheduled</div>
         </div>
@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-12 p-2">
                     <div>
-                        {{ truncateString(videos.snippet.title, 32) }}
+                        {{ truncateString(videos[0].snippet.title, 32) }}
                     </div>
                 </div>
             </div>
@@ -16,7 +16,7 @@
                 <div class="col-12">
                     <img
                         width="100%"
-                        :src="videos.snippet.thumbnails.medium.url"
+                        :src="videos[0].snippet.thumbnails.medium.url"
                     />
                 </div>
             </div>
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { DB } from "../main";
+import { EventBus, DB } from "../main";
 
 export default {
     data() {
@@ -36,15 +36,28 @@ export default {
         };
     },
     created() {
-        DB.loadDataFromFile(`${DB.apiDataFolder}/scheduled.json`).then(
-            (loadedData) => {
-                this.videos = loadedData;
+        this.loadData();
 
-                if (loadedData[0] !== undefined) {
-                    this.defined = true;
+        EventBus.$on("reloadData", this.loadData);
+    },
+
+    beforeDestroy() {
+        EventBus.$off("reloadData", this.loadData);
+    },
+    methods: {
+        loadData() {
+            DB.loadDataFromFile(`${DB.apiDataFolder}/scheduled.json`).then(
+                (loadedData) => {
+                    this.videos = loadedData;
+
+                    console.log(`Loading VID ${this.videos}`);
+
+                    if (this.videos !== undefined) {
+                        this.defined = true;
+                    }
                 }
-            }
-        );
+            );
+        }
     }
 };
 </script>
