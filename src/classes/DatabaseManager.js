@@ -8,6 +8,7 @@ export default class DatabaseManager {
     dataFolder = `${userHome}/Documents/YouTube Assist`;
     videoDataFolder = `${this.dataFolder}/Videos`;
     apiDataFolder = `${this.dataFolder}/YouTube API`;
+    ideasFile = `${this.dataFolder}/ideas.json`;
 
     constructor(_app) {
         this.app = _app;
@@ -219,6 +220,21 @@ export default class DatabaseManager {
                 reject();
             }
         });
+    }
+
+    saveIdea(idea) {
+        if (!fs.existsSync(this.ideasFile)) {
+            fs.writeFileSync(this.ideasFile, "[]");
+            console.log("File does not exist. Creating idea file");
+        }
+
+        var data = JSON.parse(fs.readFileSync(this.ideasFile));
+        data.push(idea);
+        fs.writeFileSync(this.ideasFile, JSON.stringify(data));
+    }
+
+    loadIdeas() {
+        return this.dataFromFile(this.ideasFile);
     }
 
     initializeFolders() {

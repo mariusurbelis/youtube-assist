@@ -1,5 +1,5 @@
 <template>
-    <div v-if="videos" class="container p-0">
+    <div v-if="defined" class="container p-0">
         <div class="row">
             <div class="col-12 shadow-sm p-1 mb-2">Scheduled</div>
         </div>
@@ -50,13 +50,14 @@ export default {
                 (loadedData) => {
                     this.videos = loadedData;
 
-                    console.log(`Loading VID ${this.videos}`);
-
-                    if (this.videos !== undefined) {
+                    if (typeof this.videos[0] !== "undefined") {
                         this.defined = true;
                     }
                 }
             );
+
+            // var idea = { idea: "interesting", created: Date.now() };
+            // DB.saveIdea(idea);
         }
     }
 };

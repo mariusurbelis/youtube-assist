@@ -414,8 +414,6 @@ function getScheduledVideos(auth, playlist) {
                     if (index > -1) scheduled.splice(index, 1);
                 }
 
-                //console.log(sampleArray);
-
                 DB.saveYouTubeData(scheduled, "scheduled").then(
                     handleSingleFileWriteFinished
                 );
