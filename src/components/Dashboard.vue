@@ -17,6 +17,12 @@
 
         <div class="row mb-5">
             <div class="col-12">
+                <IdeaRecord class="p-4 shadow-sm rounded-lg" />
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-12">
                 <LastVideos class="p-4 shadow-sm rounded-lg" />
             </div>
         </div>
@@ -34,6 +40,7 @@ import StatsOverview from "./StatsOverview";
 import ClosestScheduledVideo from "./ClosestScheduledVideo";
 import LastVideos from "./LastVideos";
 import CalendarMonth from "./calendar/CalendarMonth";
+import IdeaRecord from "./IdeaRecord";
 
 export default {
     name: "App",
@@ -41,7 +48,8 @@ export default {
         StatsOverview,
         ClosestScheduledVideo,
         LastVideos,
-        CalendarMonth
+        CalendarMonth,
+        IdeaRecord
     }
 };
 </script>

@@ -55,9 +55,6 @@ export default {
                     }
                 }
             );
-
-            // var idea = { idea: "interesting", created: Date.now() };
-            // DB.saveIdea(idea);
         }
     }
 };
