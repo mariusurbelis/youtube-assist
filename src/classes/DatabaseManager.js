@@ -237,6 +237,21 @@ export default class DatabaseManager {
         EventBus.$emit("reloadData");
     }
 
+    deleteIdea(ideaToDelete) {
+        var data = JSON.parse(fs.readFileSync(this.ideasFile));
+
+        data.forEach(function (result, index) {
+            if (result["idea"] === ideaToDelete.idea && result["created"] === ideaToDelete.created) {
+                //Remove from array
+                data.splice(index, 1);
+            }
+        });
+
+        fs.writeFileSync(this.ideasFile, JSON.stringify(data));
+
+        EventBus.$emit("reloadData");
+    }
+
     loadIdeas() {
         return new Promise((resolve) => {
             if (!fs.existsSync(this.ideasFile)) {

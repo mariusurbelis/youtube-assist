@@ -9,7 +9,11 @@
                 {{ idea.idea }}
             </div>
             <div class="col-2">
-                <button v-if="hovered" class="btn btn-danger mr-2">
+                <button
+                    v-if="hovered"
+                    @click="deleteIdea"
+                    class="btn btn-danger mr-2"
+                >
                     <font-awesome-icon icon="trash" />
                 </button>
 
@@ -20,12 +24,19 @@
 </template>
 
 <script>
+import { DB } from "../main";
+
 export default {
     props: ["idea"],
     data() {
         return {
             hovered: false
         };
+    },
+    methods: {
+        deleteIdea() {
+            DB.deleteIdea(this.idea);
+        }
     }
 };
 </script>
