@@ -64,7 +64,7 @@ export default {
         return {
             component: "Dashboard",
             authcomponent: "AuthScreen",
-            isLoading: true,
+            isLoading: false,
             fullPage: true
         };
     },
@@ -73,24 +73,17 @@ export default {
             this.openVideoScreen();
         });
 
-        EventBus.$on("initializeScreens", () => {
-            this.$nextTick(() => {
-                this.openVideoScreen();
-                this.$nextTick(() => {
-                    this.openVideoListScreen();
-                    this.$nextTick(() => {
-                        this.component = Dashboard;
-                        this.$nextTick(() => {
-                            this.isLoading = false;
-                        });
-                    });
-                });
-            });
-        });
-
         EventBus.$on("authSuccess", () => {
             this.authcomponent = null;
+            this.isLoading = true;
         });
+    },
+    created() {
+        if (this.authcomponent) {
+            console.log("Needs authentication");
+        }
+
+        EventBus.$on("initializeScreens", this.initializeScreens);
     },
     methods: {
         openVideoListScreen() {
@@ -110,6 +103,28 @@ export default {
         openDashboardScreen() {
             this.component = Dashboard;
             EventBus.$emit("reloadData");
+        },
+        initializeScreens() {
+            this.$nextTick(() => {
+                this.openVideoScreen();
+                this.$nextTick(() => {
+                    this.openVideoListScreen();
+                    this.$nextTick(() => {
+                        this.openKanbanScreen();
+                        this.$nextTick(() => {
+                            this.component = Dashboard;
+                            this.$nextTick(() => {
+                                this.isLoading = false;
+                                console.log("Screens initialized");
+                                EventBus.$off(
+                                    "initializeScreens",
+                                    this.initializeScreens
+                                );
+                            });
+                        });
+                    });
+                });
+            });
         }
     }
 };
