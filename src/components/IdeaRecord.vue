@@ -24,7 +24,9 @@
         </div>
 
         <div v-for="i in ideas" v-bind:key="i.idea" class="row mt-2">
-            <div class="col-12 text-left">{{ i.idea }}</div>
+            <div class="col-12 shadow-sm rounded p-2 text-left">
+                {{ i.idea }}
+            </div>
         </div>
     </div>
 </template>
@@ -49,7 +51,7 @@ export default {
         loadIdeas() {
             //this.idea = DB.loadIdeas();
             DB.loadIdeas().then((data) => {
-                console.log(data);
+                // console.log(data);
                 this.ideas = data;
             });
         }

@@ -40,7 +40,7 @@ export default {
         VideoListItem
     },
     created() {
-        //this.loadVideoList();
+        this.loadVideoList();
     },
     methods: {
         loadVideoList() {

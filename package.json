@@ -23,6 +23,7 @@
     "nedb": "^1.8.0",
     "user-home": "^2.0.0",
     "vue": "^2.6.11",
+    "vue-loading-overlay": "^3.4.2",
     "vue-router": "^3.5.1",
     "vuedraggable": "^2.24.3"
   },

@@ -58,7 +58,9 @@
         <div class="row mt-3">
             <div class="text-left col-12">
                 <p>ID: {{ video.id }}</p>
-                <p>Created: {{ timeConverter(video.created) }}</p>
+                <p v-if="timeConverter">
+                    Created: {{ timeConverter(video.created) }}
+                </p>
 
                 <div hidden class="input-group">
                     <div class="input-group-prepend">
@@ -152,6 +154,8 @@ export default {
         EventBus.$on("clearVideo", () => {
             this.clearVideoScreen();
         });
+
+        console.log("VideoScreen initialized");
     },
     created() {
         this.clearVideoScreen();

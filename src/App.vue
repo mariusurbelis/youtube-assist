@@ -9,6 +9,12 @@
 
         <component v-bind:is="authcomponent" />
 
+        <loading
+            :active.sync="isLoading"
+            :can-cancel="false"
+            :is-full-page="fullPage"
+        ></loading>
+
         <div
             class="fixed-bottom row text-center justify-content-center"
             style="height: 3em"
@@ -36,6 +42,11 @@ import AuthScreen from "./components/AuthScreen";
 import { EventBus } from "./main";
 import Kanban from "./components/Kanban.vue";
 
+// Import loading component
+import Loading from "vue-loading-overlay";
+// Import loading stylesheet
+import "vue-loading-overlay/dist/vue-loading.css";
+
 require("./classes/YouTubeAPI");
 
 export default {
@@ -46,12 +57,15 @@ export default {
         VideoScreen,
         AuthScreen,
         DatabaseManager,
-        Kanban
+        Kanban,
+        Loading
     },
     data() {
         return {
             component: "Dashboard",
-            authcomponent: "AuthScreen"
+            authcomponent: "AuthScreen",
+            isLoading: true,
+            fullPage: true
         };
     },
     beforeCreate: function () {
@@ -59,12 +73,24 @@ export default {
             this.openVideoScreen();
         });
 
+        EventBus.$on("initializeScreens", () => {
+            this.$nextTick(() => {
+                this.openVideoScreen();
+                this.$nextTick(() => {
+                    this.openVideoListScreen();
+                    this.$nextTick(() => {
+                        this.component = Dashboard;
+                        this.$nextTick(() => {
+                            this.isLoading = false;
+                        });
+                    });
+                });
+            });
+        });
+
         EventBus.$on("authSuccess", () => {
             this.authcomponent = null;
         });
-    },
-    created() {
-        this.initializeComponents();
     },
     methods: {
         openVideoListScreen() {
@@ -84,18 +110,6 @@ export default {
         openDashboardScreen() {
             this.component = Dashboard;
             EventBus.$emit("reloadData");
-        },
-        initializeComponents() {
-            // components do not get initialized
-            this.$nextTick(() => {
-                this.component = VideoList;
-                this.$nextTick(() => {
-                    this.component = VideoScreen;
-                    this.$nextTick(() => {
-                        this.component = Dashboard;
-                    });
-                });
-            });
         }
     }
 };
