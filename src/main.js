@@ -8,7 +8,10 @@ Vue.config.productionTip = false;
 export const EventBus = new Vue(); // added line
 const DB = new DatabaseManager();
 const VideoStatus = ["Idea", "In Progress", "Scheduled", "Published"];
-export { DB, VideoStatus };
+export {
+    DB,
+    VideoStatus
+};
 DB.initializeFolders();
 
 // Import the styles directly. (Or you could add them via script tags.)
@@ -16,6 +19,26 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
 Vue.use(BootstrapVue);
+
+import {
+    library
+} from '@fortawesome/fontawesome-svg-core'
+import {
+    faTrash,
+    faSave,
+    faCloudUploadAlt,
+    faPhotoVideo,
+    faAngleLeft,
+    faAngleRight,
+    faExternalLinkAlt
+} from '@fortawesome/free-solid-svg-icons'
+import {
+    FontAwesomeIcon
+} from '@fortawesome/vue-fontawesome'
+
+library.add(faTrash, faSave, faCloudUploadAlt, faPhotoVideo, faAngleLeft, faAngleRight, faExternalLinkAlt)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 new Vue({
     render: h => h(App)

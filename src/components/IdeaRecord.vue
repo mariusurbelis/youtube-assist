@@ -18,30 +18,31 @@
 
             <div class="col-2">
                 <button class="btn btn-primary" v-on:click="saveIdea">
-                    Save
+                    <font-awesome-icon icon="save" />
                 </button>
             </div>
         </div>
 
         <div v-for="i in ideas" v-bind:key="i.idea" class="row mt-2">
-            <div class="col-12 shadow-sm rounded p-2 text-left">
-                {{ i.idea }}
-            </div>
+            <IdeaListItem v-bind:idea="i" />
         </div>
     </div>
 </template>
 <script>
-import { DB } from "../main";
+import { EventBus, DB } from "../main";
+import IdeaListItem from "./IdeaListItem";
 
 export default {
+    components: { IdeaListItem },
     data() {
         return {
             idea: "",
             ideas: null
         };
     },
-    created() {
+    mounted() {
         this.loadIdeas();
+        EventBus.$on("reloadData", this.loadIdeas);
     },
     methods: {
         saveIdea() {

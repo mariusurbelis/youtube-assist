@@ -2,6 +2,10 @@ const fs = require("fs");
 const userHome = require("user-home");
 const path = require("path");
 
+import {
+    EventBus
+} from "../main"
+
 export default class DatabaseManager {
     app = null;
 
@@ -229,6 +233,8 @@ export default class DatabaseManager {
         var data = JSON.parse(fs.readFileSync(this.ideasFile));
         data.push(idea);
         fs.writeFileSync(this.ideasFile, JSON.stringify(data));
+
+        EventBus.$emit("reloadData");
     }
 
     loadIdeas() {

@@ -19,13 +19,13 @@
                     v-on:click="loadVideo(video.id)"
                     class="btn btn-primary"
                 >
-                    Load
+                    <font-awesome-icon icon="external-link-alt" />
                 </button>
                 <button
                     v-on:click="deleteVideo(video.id)"
                     class="btn btn-danger ml-2"
                 >
-                    Delete
+                    <font-awesome-icon icon="trash" />
                 </button>
             </div>
             <div class="col-6">

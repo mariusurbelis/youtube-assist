@@ -121,6 +121,7 @@
         <div class="row mt-3">
             <div class="col-12">
                 <button class="btn btn-primary col-4" v-on:click="saveData">
+                    <font-awesome-icon icon="save" />
                     Save
                 </button>
             </div>
@@ -129,6 +130,7 @@
         <div class="row mt-3">
             <div class="col-12">
                 <button class="btn btn-danger col-4" v-on:click="uploadVideo">
+                    <font-awesome-icon icon="cloud-upload-alt" />
                     Upload Video
                 </button>
             </div>

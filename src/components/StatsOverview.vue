@@ -28,6 +28,35 @@
                 </div>
             </div>
         </div>
+
+        <div class="row mt-4 text-center">
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-12 statsName">Streak</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 statsNumber">X</div>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-12 statsName">Video count</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 statsNumber">X</div>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-12 statsName">Videos last month</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 statsNumber">X</div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 

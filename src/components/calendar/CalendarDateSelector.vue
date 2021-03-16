@@ -1,8 +1,12 @@
 <template>
     <div class="calendar-date-selector">
-        <span class="rounded" @click="selectPrevious">Back</span>
+        <span class="rounded" @click="selectPrevious">
+            <font-awesome-icon icon="angle-left" />
+        </span>
         <span class="rounded" @click="selectCurrent">Today</span>
-        <span class="rounded" @click="selectNext">Next</span>
+        <span class="rounded" @click="selectNext">
+            <font-awesome-icon icon="angle-right" />
+        </span>
     </div>
 </template>
 
