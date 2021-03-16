@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container shadow-sm p-5">
         <div class="row mb-5">
             <div class="col-12"><h1>Single Video Page</h1></div>
         </div>

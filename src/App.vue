@@ -13,6 +13,8 @@
             :active.sync="isLoading"
             :can-cancel="false"
             :is-full-page="fullPage"
+            :background-color="`#efefef`"
+            :opacity="1"
         ></loading>
 
         <div
@@ -47,6 +49,7 @@ import Loading from "vue-loading-overlay";
 // Import loading stylesheet
 import "vue-loading-overlay/dist/vue-loading.css";
 
+// Required for authentication
 require("./classes/YouTubeAPI");
 
 export default {
@@ -64,7 +67,7 @@ export default {
         return {
             component: "Dashboard",
             authcomponent: "AuthScreen",
-            isLoading: false,
+            isLoading: true,
             fullPage: true
         };
     },
@@ -73,16 +76,16 @@ export default {
             this.openVideoScreen();
         });
 
+        EventBus.$on("saveAuthURL", () => {
+            this.isLoading = false;
+        });
+
         EventBus.$on("authSuccess", () => {
+            if (this.authcomponent) this.isLoading = true;
             this.authcomponent = null;
-            this.isLoading = true;
         });
     },
     created() {
-        if (this.authcomponent) {
-            console.log("Needs authentication");
-        }
-
         EventBus.$on("initializeScreens", this.initializeScreens);
     },
     methods: {
@@ -114,7 +117,7 @@ export default {
                         this.$nextTick(() => {
                             this.component = Dashboard;
                             this.$nextTick(() => {
-                                this.isLoading = false;
+                                setTimeout(() => (this.isLoading = false), 500);
                                 console.log("Screens initialized");
                                 EventBus.$off(
                                     "initializeScreens",
