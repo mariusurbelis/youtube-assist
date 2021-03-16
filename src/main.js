@@ -40,6 +40,13 @@ library.add(faTrash, faSave, faCloudUploadAlt, faPhotoVideo, faAngleLeft, faAngl
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
+import VueToast from 'vue-toast-notification';
+// Import one of the available themes
+//import 'vue-toast-notification/dist/theme-default.css';
+import 'vue-toast-notification/dist/theme-sugar.css';
+
+Vue.use(VueToast);
+
 new Vue({
     render: h => h(App)
 }).$mount("#app");

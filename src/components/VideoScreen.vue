@@ -7,7 +7,11 @@
         <div class="row">
             <div class="col-12">
                 <div class="input-group">
-                    <div class="input-group-prepend">
+                    <div
+                        @click="copyToClipboard(0)"
+                        class="input-group-prepend"
+                        style="cursor: default"
+                    >
                         <span class="input-group-text">Title</span>
                     </div>
                     <textarea
@@ -24,7 +28,11 @@
         <div class="row mt-3">
             <div class="col-12">
                 <div class="input-group">
-                    <div class="input-group-prepend">
+                    <div
+                        @click="copyToClipboard(1)"
+                        class="input-group-prepend"
+                        style="cursor: default"
+                    >
                         <span class="input-group-text">Description</span>
                     </div>
                     <textarea
@@ -41,7 +49,11 @@
         <div class="row mt-3">
             <div class="col-12">
                 <div class="input-group">
-                    <div class="input-group-prepend">
+                    <div
+                        @click="copyToClipboard(2)"
+                        class="input-group-prepend"
+                        style="cursor: default"
+                    >
                         <span class="input-group-text">Tags</span>
                     </div>
                     <textarea
@@ -54,6 +66,14 @@
                 </div>
             </div>
         </div>
+
+        <input type="hidden" id="video-title-copy" :value="video.title" />
+        <input
+            type="hidden"
+            id="video-description-copy"
+            :value="video.description"
+        />
+        <input type="hidden" id="video-tags-copy" :value="video.tags" />
 
         <div class="row mt-3">
             <div class="text-left col-12">
@@ -227,6 +247,34 @@ export default {
             }
             // const { dialog } = require("electron");
             // console.log(dialog.showOpenDialog({ properties: ["openFile"] }));
+        },
+        copyToClipboard(id) {
+            const copySelection = ["title", "description", "tags"];
+
+            let testingCodeToCopy = document.querySelector(
+                `#video-${copySelection[id]}-copy`
+            );
+            testingCodeToCopy.setAttribute("type", "text"); // hidden
+            testingCodeToCopy.select();
+
+            try {
+                document.execCommand("copy");
+                //var successful = document.execCommand("copy");
+                //var msg = successful ? "successful" : "unsuccessful";
+                //alert("Testing code was copied " + msg);
+                let instance = this.$toast.open(
+                    `Copy of ${copySelection[id]} succesfull`
+                );
+                setTimeout(() => {
+                    instance.dismiss();
+                }, 1000);
+            } catch (err) {
+                //alert("Oops, unable to copy");
+            }
+
+            /* unselect the range */
+            testingCodeToCopy.setAttribute("type", "hidden");
+            window.getSelection().removeAllRanges();
         }
     }
 };
