@@ -1,17 +1,8 @@
-import {
-    readFile,
-    mkdirSync,
-    writeFile
-} from "fs";
+import { readFile, mkdirSync, writeFile } from "fs";
 // import { createInterface } from "readline";
-import {
-    google
-} from "googleapis";
+import { google } from "googleapis";
 // import { trimEnd } from "user-home";
-import {
-    EventBus,
-    DB
-} from "../main";
+import { EventBus, DB } from "../main";
 const userHome = require("user-home");
 const fs = require("fs");
 var OAuth2 = google.auth.OAuth2;
@@ -31,7 +22,7 @@ pullDataFromAPI();
 
 var minutes = 1,
     the_interval = minutes * 60 * 1000;
-setInterval(function () {
+setInterval(function() {
     if (!uploadingVideo) {
         console.log(`Refreshing API data every ${minutes} minutes`);
         pullDataFromAPI();
@@ -66,7 +57,7 @@ function authorize(credentials, callback) {
         uploadsInitialized = true;
     }
     // Check if we have previously stored a token.
-    readFile(TOKEN_PATH, function (err, token) {
+    readFile(TOKEN_PATH, function(err, token) {
         if (err) {
             getNewToken(oauth2Client, callback);
         } else {
@@ -93,7 +84,7 @@ function authorizeUpload(credentials, callback, video) {
         uploadsInitialized = true;
     }
     // Check if we have previously stored a token.
-    readFile(TOKEN_PATH, function (err, token) {
+    readFile(TOKEN_PATH, function(err, token) {
         if (err) {
             getNewToken(oauth2Client, callback);
         } else {
@@ -167,7 +158,7 @@ function getNewToken(oauth2Client, callback) {
     EventBus.$emit("saveAuthURL", authUrl);
 
     EventBus.$on("authYouTubeAPI", code => {
-        oauth2Client.getToken(code, function (err, token) {
+        oauth2Client.getToken(code, function(err, token) {
             if (err) {
                 console.log("Error while trying to retrieve access token", err);
                 return;
@@ -222,7 +213,8 @@ function uploadVideo(auth, video) {
     console.log(`Thumbnail file size ${getFilesize(video.thumbnailPath)} MB`);
 
     uploadingVideo = true;
-    service.videos.insert({
+    service.videos.insert(
+        {
             auth: auth,
             part: "snippet,status",
             requestBody: {
@@ -242,21 +234,22 @@ function uploadVideo(auth, video) {
                 body: fs.createReadStream(video.filePath)
             }
         },
-        function (err, response) {
+        function(err, response) {
             if (err) {
                 console.log("The API returned an error: " + err);
                 return;
             }
             console.log(response.data);
             console.log("Video uploaded. Uploading the thumbnail now.");
-            service.thumbnails.set({
+            service.thumbnails.set(
+                {
                     auth: auth,
                     videoId: response.data.id,
                     media: {
                         body: fs.createReadStream(video.thumbnailPath)
                     }
                 },
-                function (err, response) {
+                function(err, response) {
                     if (err) {
                         console.log("The API returned an error: " + err);
                         return;
@@ -275,14 +268,16 @@ function uploadVideo(auth, video) {
  */
 function getChannel(auth) {
     var service = google.youtube("v3");
-    service.channels.list({
+    service.channels.list(
+        {
             auth: auth,
             part: "contentDetails,statistics",
             mine: true
         },
-        function (err, response) {
+        function(err, response) {
             if (err) {
                 console.log("The API returned an error: " + err);
+                refreshAuth();
                 return;
             }
             var channels = response.data.items;
@@ -303,16 +298,24 @@ function getChannel(auth) {
     );
 }
 
+function refreshAuth() {
+    fs.unlink(TOKEN_PATH, err => {
+        if (err) throw err;
+        else window.location.reload();
+    });
+}
+
 function getPlaylist(auth, playListIDQuery) {
     var service = google.youtube("v3");
-    service.playlistItems.list({
+    service.playlistItems.list(
+        {
             auth: auth,
             part: "contentDetails,status",
             playlistId: playListIDQuery,
             maxResults: 30
             // mine: true
         },
-        function (err, response) {
+        function(err, response) {
             // console.log(`Looking for ${playListIDQuery}`);
 
             if (err) {
@@ -344,13 +347,14 @@ function getLatestVideos(auth, playlist) {
     });
 
     var service = google.youtube("v3");
-    service.videos.list({
+    service.videos.list(
+        {
             auth: auth,
             part: "snippet,statistics",
             id: videoIDs
             // mine: true
         },
-        function (err, response) {
+        function(err, response) {
             // console.log(`Looking for ${playlist[0].contentDetails.videoId}`);
 
             if (err) {
@@ -392,13 +396,14 @@ function getScheduledVideos(auth, playlist) {
     });
 
     var service = google.youtube("v3");
-    service.videos.list({
+    service.videos.list(
+        {
             auth: auth,
             part: "snippet,statistics",
             id: videoIDs
             // mine: true
         },
-        function (err, response) {
+        function(err, response) {
             // console.log(`Looking for ${playlist[0].contentDetails.videoId}`);
 
             if (err) {
