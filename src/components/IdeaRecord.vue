@@ -46,8 +46,10 @@ export default {
     },
     methods: {
         saveIdea() {
-            DB.saveIdea(this.idea);
-            this.idea = "";
+            if (this.idea !== "") {
+                DB.saveIdea(this.idea);
+                this.idea = "";
+            }
         },
         loadIdeas() {
             //this.idea = DB.loadIdeas();
