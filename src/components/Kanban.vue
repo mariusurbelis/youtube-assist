@@ -29,7 +29,7 @@
 import draggable from "vuedraggable";
 import KanbanVideoCard from "./KanbanVideoCard";
 // import VideoListItem from "./VideoListItem";
-import { DB } from "../main";
+import { EventBus, DB } from "../main";
 
 export default {
     name: "Kanban",
@@ -56,8 +56,11 @@ export default {
             ]
         };
     },
-    created() { // TODO: doesn't reload when opened
+    created() {
+        // TODO: doesn't reload when opened
         this.loadVideoList();
+
+        EventBus.$on("reloadData", this.loadVideoList);
     },
     methods: {
         loadVideoList() {

@@ -17,7 +17,13 @@
                     <font-awesome-icon icon="trash" />
                 </button>
 
-                <button v-if="hovered" class="btn btn-primary">Vid</button>
+                <button
+                    v-if="hovered"
+                    @click="convertIdea"
+                    class="btn btn-primary"
+                >
+                    Vid
+                </button>
             </div>
         </div>
     </div>
@@ -36,6 +42,9 @@ export default {
     methods: {
         deleteIdea() {
             DB.deleteIdea(this.idea);
+        },
+        convertIdea() {
+            DB.convertIdeaToVideo(this.idea);
         }
     }
 };

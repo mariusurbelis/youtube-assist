@@ -19,24 +19,27 @@ export default class DatabaseManager {
     }
 
     saveVideo(data) {
-        if (data.id < 1) {
-            //console.log("Looking for a new ID");
+        return new Promise((resolve, reject) => {
+            if (data.id < 1) {
+                //console.log("Looking for a new ID");
 
-            data.id = 1;
+                data.id = 1;
 
-            while (fs.existsSync(this.fileNameFromID(data.id))) {
-                data.id++;
+                while (fs.existsSync(this.fileNameFromID(data.id))) {
+                    data.id++;
+                }
             }
-        }
 
-        fs.writeFile(
-            `${this.videoDataFolder}/${data.id}.json`,
-            JSON.stringify(data),
-            function (err) {
-                if (err) throw err;
-                //console.log("File is created successfully.");
-            }
-        );
+            fs.writeFile(
+                `${this.videoDataFolder}/${data.id}.json`,
+                JSON.stringify(data),
+                function (err) {
+                    if (err) reject(err);
+                    else resolve();
+                    //console.log("File is created successfully.");
+                }
+            );
+        });
     }
 
     getAllVideos() {
@@ -178,6 +181,7 @@ export default class DatabaseManager {
         return new Promise((resolve, reject) => {
             try {
                 fs.unlinkSync(this.fileNameFromID(id));
+                EventBus.$emit("reloadData");
                 resolve();
             } catch (error) {
                 reject();
@@ -263,6 +267,30 @@ export default class DatabaseManager {
                 resolve(data);
             });
         });
+    }
+
+    convertIdeaToVideo(idea) {
+        var newVideo = this.getEmptyVideo();
+
+        newVideo.title = `Converted idea`;
+        newVideo.description = idea.idea;
+
+        this.saveVideo(newVideo).then(() => {
+            this.deleteIdea(idea);
+        });
+    }
+
+    getEmptyVideo() {
+        return {
+            id: 0,
+            title: "",
+            description: "",
+            tags: "",
+            status: 0,
+            filePath: "",
+            thumbnailPath: "",
+            created: Date.now()
+        };
     }
 
     initializeFolders() {

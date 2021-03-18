@@ -173,9 +173,7 @@ export default {
             this.loadData(videoID);
         });
 
-        EventBus.$on("clearVideo", () => {
-            this.clearVideoScreen();
-        });
+        EventBus.$on("clearVideo", this.clearVideoScreen);
 
         console.log("VideoScreen initialized");
     },
@@ -184,17 +182,7 @@ export default {
     },
     methods: {
         clearVideoScreen() {
-            this.video = {
-                id: 0,
-                title: "",
-                description: "",
-                tags: "",
-                status: 0,
-                filePath: "",
-                thumbnailPath: "",
-                created: Date.now()
-            };
-
+            this.video = DB.getEmptyVideo();
             this.filePath = "";
         },
         loadData(videoID) {
