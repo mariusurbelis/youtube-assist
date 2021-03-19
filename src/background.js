@@ -1,14 +1,26 @@
 "use strict";
 
-import { app, protocol, BrowserWindow } from "electron";
-import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
-import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
+import {
+    app,
+    protocol,
+    BrowserWindow
+} from "electron";
+import {
+    createProtocol
+} from "vue-cli-plugin-electron-builder/lib";
+import installExtension, {
+    VUEJS_DEVTOOLS
+} from "electron-devtools-installer";
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([
-    { scheme: "app", privileges: { secure: true, standard: true } }
-]);
+protocol.registerSchemesAsPrivileged([{
+    scheme: "app",
+    privileges: {
+        secure: true,
+        standard: true
+    }
+}]);
 
 async function createWindow() {
     // Create the browser window.
@@ -20,7 +32,8 @@ async function createWindow() {
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
             //nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION
-            nodeIntegration: true
+            nodeIntegration: true,
+            webSecurity: false
         },
         resizable: false
     });
@@ -57,6 +70,12 @@ app.on("activate", () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", async () => {
+    protocol.registerFileProtocol('file', (request, callback) => {
+        const pathname = request.url.replace('file:///', '');
+        console.log("REG REG REG");
+        callback(pathname);
+    });
+
     if (isDevelopment && !process.env.IS_TEST) {
         // Install Vue Devtools
         try {
