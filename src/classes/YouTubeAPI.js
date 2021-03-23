@@ -212,7 +212,7 @@ function getFilesize(filename) {
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function uploadVideo(auth, video) {
+async function uploadVideo(auth, video) {
     const service = google.youtube("v3");
 
     console.log(`Uploading ${video.filePath}`);
@@ -221,6 +221,7 @@ function uploadVideo(auth, video) {
     console.log(`Thumbnail file size ${getFilesize(video.thumbnailPath)} MB`);
 
     uploadingVideo = true;
+
     service.videos.insert({
             auth: auth,
             part: "snippet,status",
@@ -238,9 +239,7 @@ function uploadVideo(auth, video) {
                 }
             },
             media: {
-                // body: fs.createReadStream(video.filePath)
-                mimeType: 'video/mp4',
-                body: fs.readFileSync(video.filePath)
+                body: fs.createReadStream(video.filePath),
             }
         },
         function (err, response) {
