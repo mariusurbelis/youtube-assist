@@ -2,9 +2,7 @@ const fs = require("fs");
 const userHome = require("user-home");
 const path = require("path");
 
-import {
-    EventBus
-} from "../main"
+import { EventBus } from "../main";
 
 export default class DatabaseManager {
     app = null;
@@ -33,7 +31,7 @@ export default class DatabaseManager {
             fs.writeFile(
                 `${this.videoDataFolder}/${data.id}.json`,
                 JSON.stringify(data),
-                function (err) {
+                function(err) {
                     if (err) reject(err);
                     else resolve();
                     //console.log("File is created successfully.");
@@ -117,7 +115,7 @@ export default class DatabaseManager {
             fs.writeFile(
                 `${this.apiDataFolder}/channel_data.json`,
                 JSON.stringify(data),
-                function (err) {
+                function(err) {
                     if (err) reject(err);
                     resolve();
                 }
@@ -130,7 +128,7 @@ export default class DatabaseManager {
             fs.writeFile(
                 `${this.apiDataFolder}/${fileName}.json`,
                 JSON.stringify(data),
-                function (err) {
+                function(err) {
                     if (err) reject(err);
                     resolve();
                 }
@@ -140,7 +138,7 @@ export default class DatabaseManager {
 
     loadDataFromFile(filePath) {
         return new Promise((resolve, reject) => {
-            var timer = setTimeout(function () {
+            var timer = setTimeout(function() {
                 watcher.close();
                 reject(
                     new Error(
@@ -149,7 +147,7 @@ export default class DatabaseManager {
                 );
             }, 100000);
 
-            fs.access(filePath, fs.constants.R_OK, function (err) {
+            fs.access(filePath, fs.constants.R_OK, function(err) {
                 if (!err) {
                     clearTimeout(timer);
                     watcher.close();
@@ -163,7 +161,7 @@ export default class DatabaseManager {
 
             var dir = path.dirname(filePath);
             var basename = path.basename(filePath);
-            var watcher = fs.watch(dir, function (eventType, filename) {
+            var watcher = fs.watch(dir, function(eventType, filename) {
                 if (eventType === "rename" && filename === basename) {
                     clearTimeout(timer);
                     watcher.close();
@@ -232,7 +230,7 @@ export default class DatabaseManager {
         var idea = {
             idea: ideaText,
             created: Date.now()
-        }
+        };
 
         var data = JSON.parse(fs.readFileSync(this.ideasFile));
         data.push(idea);
@@ -244,8 +242,11 @@ export default class DatabaseManager {
     deleteIdea(ideaToDelete) {
         var data = JSON.parse(fs.readFileSync(this.ideasFile));
 
-        data.forEach(function (result, index) {
-            if (result["idea"] === ideaToDelete.idea && result["created"] === ideaToDelete.created) {
+        data.forEach(function(result, index) {
+            if (
+                result["idea"] === ideaToDelete.idea &&
+                result["created"] === ideaToDelete.created
+            ) {
                 //Remove from array
                 data.splice(index, 1);
             }
@@ -257,13 +258,13 @@ export default class DatabaseManager {
     }
 
     loadIdeas() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             if (!fs.existsSync(this.ideasFile)) {
                 fs.writeFileSync(this.ideasFile, "[]");
                 console.log("File does not exist. Creating idea file");
             }
 
-            this.loadDataFromFile(this.ideasFile).then((data) => {
+            this.loadDataFromFile(this.ideasFile).then(data => {
                 resolve(data);
             });
         });
@@ -291,6 +292,16 @@ export default class DatabaseManager {
             thumbnailPath: "",
             created: Date.now()
         };
+    }
+
+    getStatistics() {
+        return new Promise(resolve => {
+            var stats = {
+                uploadsLastMonth: 0
+            };
+
+            resolve(stats);
+        });
     }
 
     initializeFolders() {

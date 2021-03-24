@@ -69,7 +69,8 @@ export default {
             stats: "",
             subscriberCount: "",
             videoCount: "",
-            viewCount: ""
+            viewCount: "",
+            uploadsLastMonth: 0
         };
     },
     beforeCreate() {
@@ -96,6 +97,10 @@ export default {
                     // console.log(`Loading stats`);
                 }
             );
+
+            DB.getStatistics().then((stats) => {
+                console.log(stats);
+            });
         }
     }
 };
