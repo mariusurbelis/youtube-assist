@@ -23,13 +23,13 @@
 
         <div class="row mb-5">
             <div class="col-12">
-                <LastVideos class="p-4 shadow-sm rounded-lg" />
+                <CalendarMonth class="shadow-sm rounded-lg p-4" />
             </div>
         </div>
 
         <div class="row">
             <div class="col-12">
-                <CalendarMonth class="shadow-sm rounded-lg p-4" />
+                <LastVideos class="p-4 shadow-sm rounded-lg" />
             </div>
         </div>
     </div>

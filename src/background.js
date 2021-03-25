@@ -27,7 +27,7 @@ async function createWindow() {
     // Create the browser window.
     const win = new BrowserWindow({
         width: 1280,
-        height: 720,
+        height: 900,
         title: "YouTube Assist Desktop",
         webPreferences: {
             // Use pluginOptions.nodeIntegration, leave this alone

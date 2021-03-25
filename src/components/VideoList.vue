@@ -1,6 +1,6 @@
 
 <template>
-    <div class="container">
+    <div class="container mb-5">
         <div class="row">
             <div class="col-12 shadow p-4 rounded-lg">
                 <h1>Video List</h1>
