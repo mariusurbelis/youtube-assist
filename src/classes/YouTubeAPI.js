@@ -207,6 +207,11 @@ function getFilesize(filename) {
     return fileSizeInBytes / 1000000;
 }
 
+const {
+    ipcRenderer
+} = window.require("electron");
+
+
 /**
  * Upload the video file.
  *
@@ -217,56 +222,64 @@ async function uploadVideo(auth, video) {
 
     console.log(`Uploading ${video.filePath}`);
 
-    console.log(`Video file size ${getFilesize(video.filePath)} MB`);
-    console.log(`Thumbnail file size ${getFilesize(video.thumbnailPath)} MB`);
+    // var videoFileStream = ipcRenderer.sendSync("createReadStream", video.filePath);
+    // var thumbnailFileStream = ipcRenderer.sendSync("createReadStream", video.thumbnailPath);
 
     uploadingVideo = true;
 
-    service.videos.insert({
-            auth: auth,
-            part: "snippet,status",
-            requestBody: {
-                snippet: {
-                    title: video.title,
-                    description: video.description,
-                    tags: video.tags,
-                    categoryId: 22, // People & Blogs
-                    defaultLanguage: "en",
-                    defaultAudioLanguage: "en"
-                },
-                status: {
-                    privacyStatus: "private"
-                }
-            },
-            media: {
-                body: fs.createReadStream(video.filePath),
-            }
-        },
-        function (err, response) {
-            if (err) {
-                console.log("The API returned an error: " + err);
-                return;
-            }
-            console.log(response.data);
-            console.log("Video uploaded. Uploading the thumbnail now.");
-            service.thumbnails.set({
-                    auth: auth,
-                    videoId: response.data.id,
-                    media: {
-                        body: fs.createReadStream(video.thumbnailPath)
-                        // body: fs.readFileSync(video.thumbnailPath)
-                    }
-                },
-                function (err, response) {
-                    if (err) {
-                        console.log("The API returned an error: " + err);
-                        return;
-                    }
-                    console.log(response.data);
-                }
-            );
-        }
-    );
+    console.log(`Video file size ${getFilesize(video.filePath)} MB`);
+    console.log(`Thumbnail file size ${getFilesize(video.thumbnailPath)} MB`);
+
+    ipcRenderer.send("upload", auth, video);
+
+    // service.videos.insert({
+    //         auth: auth,
+    //         part: "snippet,status",
+    //         requestBody: {
+    //             snippet: {
+    //                 title: video.title,
+    //                 description: video.description,
+    //                 tags: video.tags,
+    //                 categoryId: 22, // People & Blogs
+    //                 defaultLanguage: "en",
+    //                 defaultAudioLanguage: "en"
+    //             },
+    //             status: {
+    //                 privacyStatus: "private"
+    //             }
+    //         },
+    //         media: {
+    //             // body: fs.createReadStream(video.filePath),
+    //             // body: ipcRenderer.sendSync("createReadStream", video.filePath),
+    //             body: videoFileStream
+    //         }
+    //     },
+    //     function (err, response) {
+    //         if (err) {
+    //             console.log("The API returned an error: " + err);
+    //             return;
+    //         }
+    //         console.log(response.data);
+    //         console.log("Video uploaded. Uploading the thumbnail now.");
+    //         service.thumbnails.set({
+    //                 auth: auth,
+    //                 videoId: response.data.id,
+    //                 media: {
+    //                     // body: fs.createReadStream(video.thumbnailPath)
+    //                     // body: ipcRenderer.sendSync("createReadStream", video.thumbnailPath),
+    //                     body: thumbnailFileStream
+    //                 }
+    //             },
+    //             function (err, response) {
+    //                 if (err) {
+    //                     console.log("The API returned an error: " + err);
+    //                     return;
+    //                 }
+    //                 console.log(response.data);
+    //             }
+    //         );
+    //     }
+    // );
 }
 
 /**

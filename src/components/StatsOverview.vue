@@ -44,7 +44,7 @@
                     <div class="col-12 statsName">Video count</div>
                 </div>
                 <div class="row">
-                    <div class="col-12 statsNumber">X</div>
+                    <div class="col-12 statsNumber">{{ uploadsThisMonth }}</div>
                 </div>
             </div>
 
@@ -53,7 +53,9 @@
                     <div class="col-12 statsName">Videos last month</div>
                 </div>
                 <div class="row">
-                    <div class="col-12 statsNumber">X</div>
+                    <div class="col-12 statsNumber">
+                        {{ uploadsLastMonth }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -70,7 +72,8 @@ export default {
             subscriberCount: "",
             videoCount: "",
             viewCount: "",
-            uploadsLastMonth: 0
+            uploadsLastMonth: 0,
+            uploadsThisMonth: 0
         };
     },
     beforeCreate() {
@@ -99,7 +102,9 @@ export default {
             );
 
             DB.getStatistics().then((stats) => {
-                console.log(stats);
+                // console.log(stats);
+                this.uploadsLastMonth = stats.uploadsLastMonth;
+                this.uploadsThisMonth = stats.uploadsThisMonth;
             });
         }
     }

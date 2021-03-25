@@ -4,37 +4,43 @@
         :class="{
             'calendar-day--not-current': !day.isCurrentMonth,
             'calendar-day--today': isToday,
-            'calendar-day--today--video': video !== null && isToday
+            'calendar-day--today--video': videos && isToday
         }"
     >
         <span>{{ label }}</span>
 
-        <div v-if="video" class="shadow-sm rounded-lg">
-            <div class="row mt-3">
-                <div class="col-12">
-                    <img
-                        width="100%"
-                        :src="video.snippet.thumbnails.medium.url"
-                    />
-                </div>
-            </div>
+        <div v-if="videos">
             <div
-                class="row align-items-center pr-2 pl-2 pt-1 pb-1"
-                style="font-size: 0.7em"
+                v-for="video in videos"
+                v-bind:key="video.title"
+                class="shadow-sm rounded-lg"
             >
-                <div
-                    style="
-                        display: -webkit-box;
-                        -webkit-box-orient: vertical;
-                        -webkit-line-clamp: 2;
-                        overflow: hidden;
-                    "
-                    class="col-8 text-left"
-                >
-                    {{ video.snippet.title }}
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <img
+                            width="100%"
+                            :src="video.snippet.thumbnails.medium.url"
+                        />
+                    </div>
                 </div>
-                <div class="col-4 text-right">
-                    {{ video.statistics.viewCount }}
+                <div
+                    class="row align-items-center pr-2 pl-2 pt-1 pb-1"
+                    style="font-size: 0.7em"
+                >
+                    <div
+                        style="
+                            display: -webkit-box;
+                            -webkit-box-orient: vertical;
+                            -webkit-line-clamp: 2;
+                            overflow: hidden;
+                        "
+                        class="col-8 text-left"
+                    >
+                        {{ video.snippet.title }}
+                    </div>
+                    <div class="col-4 text-right">
+                        {{ video.statistics.viewCount }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,7 +59,7 @@ export default {
 
     data() {
         return {
-            video: null,
+            videos: null,
             title: ""
         };
     },
@@ -92,8 +98,8 @@ export default {
 
     methods: {
         loadData() {
-            DB.getVideoByDate(this.day.date).then((returnedVideo) => {
-                this.video = returnedVideo;
+            DB.getVideoByDate(this.day.date).then((returnedVideos) => {
+                if (returnedVideos.length > 0) this.videos = returnedVideos;
                 // console.log("Loading calendar vid");
             });
         }

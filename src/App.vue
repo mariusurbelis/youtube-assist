@@ -118,7 +118,7 @@ export default {
                             this.component = Dashboard;
                             this.$nextTick(() => {
                                 setTimeout(() => (this.isLoading = false), 500);
-                                console.log("Screens initialized");
+                                // console.log("Screens initialized");
                                 EventBus.$off(
                                     "initializeScreens",
                                     this.initializeScreens

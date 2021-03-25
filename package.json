@@ -21,7 +21,7 @@
     "core-js": "^3.6.5",
     "dayjs": "^1.10.4",
     "google-auth-library": "^7.0.2",
-    "googleapis": "^67.0.0",
+    "googleapis": "^67.1.1",
     "jquery": "^3.5.1",
     "nedb": "^1.8.0",
     "user-home": "^2.0.0",
@@ -55,7 +55,10 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "no-unused-vars": "off",
+      "no-unreachable": "off"
+    }
   },
   "browserslist": [
     "> 1%",

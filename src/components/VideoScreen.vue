@@ -160,6 +160,7 @@
 
 <script>
 import { EventBus, DB } from "../main";
+const { ipcRenderer } = window.require("electron");
 
 export default {
     data() {
@@ -173,12 +174,29 @@ export default {
             this.loadData(videoID);
         });
 
-        EventBus.$on("clearVideo", this.clearVideoScreen);
-
-        console.log("VideoScreen initialized");
+        // console.log("VideoScreen initialized");
     },
     created() {
         this.clearVideoScreen();
+
+        EventBus.$on("clearVideo", this.clearVideoScreen);
+
+        ipcRenderer.on("videoUploaded", () => {
+            let instance = this.$toast.open(`Video upload succesfull`);
+            setTimeout(() => {
+                instance.dismiss();
+            }, 5000);
+        });
+
+        ipcRenderer.on("videoUploadError", () => {
+            let instance = this.$toast.open({
+                message: "Video upload error",
+                type: "error"
+            });
+            setTimeout(() => {
+                instance.dismiss();
+            }, 5000);
+        });
     },
     methods: {
         clearVideoScreen() {
@@ -207,6 +225,8 @@ export default {
         },
         uploadVideo() {
             EventBus.$emit("uploadVideo", this.video);
+            //window.ipcRenderer.send("upload", this.video);
+            // ipcRenderer.send("upload", this.video);
         },
         handleFileChange(e) {
             var file = e.target.files[0];

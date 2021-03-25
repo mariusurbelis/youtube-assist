@@ -2,7 +2,9 @@ const fs = require("fs");
 const userHome = require("user-home");
 const path = require("path");
 
-import { EventBus } from "../main";
+import {
+    EventBus
+} from "../main";
 
 export default class DatabaseManager {
     app = null;
@@ -31,7 +33,7 @@ export default class DatabaseManager {
             fs.writeFile(
                 `${this.videoDataFolder}/${data.id}.json`,
                 JSON.stringify(data),
-                function(err) {
+                function (err) {
                     if (err) reject(err);
                     else resolve();
                     //console.log("File is created successfully.");
@@ -115,7 +117,7 @@ export default class DatabaseManager {
             fs.writeFile(
                 `${this.apiDataFolder}/channel_data.json`,
                 JSON.stringify(data),
-                function(err) {
+                function (err) {
                     if (err) reject(err);
                     resolve();
                 }
@@ -128,7 +130,7 @@ export default class DatabaseManager {
             fs.writeFile(
                 `${this.apiDataFolder}/${fileName}.json`,
                 JSON.stringify(data),
-                function(err) {
+                function (err) {
                     if (err) reject(err);
                     resolve();
                 }
@@ -138,7 +140,7 @@ export default class DatabaseManager {
 
     loadDataFromFile(filePath) {
         return new Promise((resolve, reject) => {
-            var timer = setTimeout(function() {
+            var timer = setTimeout(function () {
                 watcher.close();
                 reject(
                     new Error(
@@ -147,7 +149,7 @@ export default class DatabaseManager {
                 );
             }, 100000);
 
-            fs.access(filePath, fs.constants.R_OK, function(err) {
+            fs.access(filePath, fs.constants.R_OK, function (err) {
                 if (!err) {
                     clearTimeout(timer);
                     watcher.close();
@@ -161,7 +163,7 @@ export default class DatabaseManager {
 
             var dir = path.dirname(filePath);
             var basename = path.basename(filePath);
-            var watcher = fs.watch(dir, function(eventType, filename) {
+            var watcher = fs.watch(dir, function (eventType, filename) {
                 if (eventType === "rename" && filename === basename) {
                     clearTimeout(timer);
                     watcher.close();
@@ -198,6 +200,8 @@ export default class DatabaseManager {
             try {
                 this.loadDataFromFile(`${this.apiDataFolder}/latest.json`).then(
                     data => {
+                        var videos = new Array();
+
                         data.forEach(video => {
                             var dateObj = new Date(video.snippet.publishedAt);
                             var month = (
@@ -210,9 +214,11 @@ export default class DatabaseManager {
                             var videoDate = year + "-" + month + "-" + day;
 
                             if (date === videoDate) {
-                                resolve(video);
+                                videos.push(video);
                             }
                         });
+
+                        resolve(videos);
                     }
                 );
             } catch {
@@ -242,7 +248,7 @@ export default class DatabaseManager {
     deleteIdea(ideaToDelete) {
         var data = JSON.parse(fs.readFileSync(this.ideasFile));
 
-        data.forEach(function(result, index) {
+        data.forEach(function (result, index) {
             if (
                 result["idea"] === ideaToDelete.idea &&
                 result["created"] === ideaToDelete.created
@@ -297,10 +303,49 @@ export default class DatabaseManager {
     getStatistics() {
         return new Promise(resolve => {
             var stats = {
-                uploadsLastMonth: 0
+                uploadsLastMonth: 0,
+                uploadsThisMonth: 0
             };
 
-            resolve(stats);
+            var date = {
+                year: null,
+                month: null,
+                previousMonth: null,
+                day: null
+            };
+
+            date.year = new Date().getFullYear();
+            date.month = ("0" + (new Date().getUTCMonth() + 1)).slice(-2);
+            date.previousMonth = ("0" + (new Date().getUTCMonth() === 0 ? 12 : new Date().getUTCMonth())).slice(-2);
+            date.day = ("0" + new Date().getUTCDate()).slice(-2);
+
+            this.loadDataFromFile(`${this.apiDataFolder}/latest.json`).then(
+                data => {
+                    var videosFromLastMonth = new Array();
+                    var videosFromThisMonth = new Array();
+
+                    data.forEach(video => {
+                        var dateObj = new Date(video.snippet.publishedAt);
+                        var month = (
+                            "0" +
+                            (dateObj.getUTCMonth() + 1)
+                        ).slice(-2); //months from 1-12
+                        // var day = ("0" + dateObj.getUTCDate()).slice(-2);
+                        var year = dateObj.getUTCFullYear();
+
+                        var videoDate = year + "-" + month;
+
+                        if ((date.year + "-" + date.previousMonth) === videoDate) videosFromLastMonth.push(video);
+                        if ((date.year + "-" + date.month) === videoDate) videosFromThisMonth.push(video);
+
+                    });
+
+                    stats.uploadsLastMonth = videosFromLastMonth.length;
+                    stats.uploadsThisMonth = videosFromThisMonth.length;
+
+                    resolve(stats);
+                }
+            );
         });
     }
 
