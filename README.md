@@ -4,7 +4,7 @@ A tool to help YouTube content creators improve consistency, visualize and manag
 
 ## Tech
 
-This software is being created in JavaScript using Vue.js framework and Electron. It mainly targets Windows desktop platform.
+This software is being created in JavaScript using Vue.js framework and Electron. It mainly targets the Windows desktop platform.
 
 ## Project setup
 
