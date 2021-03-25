@@ -56,15 +56,6 @@ function authorize(credentials, callback) {
 
     var oauth2Client = new OAuth2(clientId, clientSecret, redirectUrl);
 
-    // console.log(TOKEN_PATH);
-
-    if (!uploadsInitialized) {
-        EventBus.$on("uploadVideo", video => {
-            sendVideoForUpload(video);
-        });
-        // console.log("Initializing uploads");
-        uploadsInitialized = true;
-    }
     // Check if we have previously stored a token.
     readFile(TOKEN_PATH, function (err, token) {
         if (err) {
@@ -73,34 +64,6 @@ function authorize(credentials, callback) {
             oauth2Client.credentials = JSON.parse(token);
             EventBus.$emit("authSuccess");
             callback(oauth2Client);
-        }
-    });
-}
-
-function authorizeUpload(credentials, callback, video) {
-    var clientSecret = credentials.installed.client_secret;
-    var clientId = credentials.installed.client_id;
-    var redirectUrl = credentials.installed.redirect_uris[0];
-
-    var oauth2Client = new OAuth2(clientId, clientSecret, redirectUrl);
-
-    // console.log(TOKEN_PATH);
-
-    if (!uploadsInitialized) {
-        EventBus.$on("uploadVideo", video => {
-            sendVideoForUpload(video);
-        });
-        uploadsInitialized = true;
-    }
-    // Check if we have previously stored a token.
-    readFile(TOKEN_PATH, function (err, token) {
-        if (err) {
-            getNewToken(oauth2Client, callback);
-        } else {
-            oauth2Client.credentials = JSON.parse(token);
-            EventBus.$emit("authSuccess");
-            callback();
-            uploadVideo(oauth2Client, video);
         }
     });
 }
@@ -115,10 +78,7 @@ function handleSingleFileWriteFinished() {
 }
 
 function dataLoadFinished() {
-    // console.log("File writes are done");
-
     EventBus.$emit("initializeScreens");
-
     EventBus.$emit("reloadData");
 }
 
@@ -136,15 +96,6 @@ function pullDataFromAPI() {
     });
 }
 
-function videoUploadAuthorized() {
-    console.log("Video upload authorized");
-}
-
-function sendVideoForUpload(video) {
-    console.log("Sending video for upload");
-    authorizeUpload(clientSecret, videoUploadAuthorized, video);
-}
-
 /**
  * Get and store new token after prompting for user authorization, and then
  * execute the given callback with the authorized OAuth2 client.
@@ -158,11 +109,8 @@ function getNewToken(oauth2Client, callback) {
         access_type: "offline",
         scope: SCOPES
     });
+
     console.log("Authorize this app by visiting this url: ", authUrl);
-    // var rl = createInterface({
-    //     input: process.stdin,
-    //     output: process.stdout
-    // });
 
     EventBus.$emit("saveAuthURL", authUrl);
 
@@ -207,11 +155,6 @@ function getFilesize(filename) {
     return fileSizeInBytes / 1000000;
 }
 
-const {
-    ipcRenderer
-} = window.require("electron");
-
-
 /**
  * Upload the video file.
  *
@@ -229,57 +172,6 @@ async function uploadVideo(auth, video) {
 
     console.log(`Video file size ${getFilesize(video.filePath)} MB`);
     console.log(`Thumbnail file size ${getFilesize(video.thumbnailPath)} MB`);
-
-    ipcRenderer.send("upload", auth, video);
-
-    // service.videos.insert({
-    //         auth: auth,
-    //         part: "snippet,status",
-    //         requestBody: {
-    //             snippet: {
-    //                 title: video.title,
-    //                 description: video.description,
-    //                 tags: video.tags,
-    //                 categoryId: 22, // People & Blogs
-    //                 defaultLanguage: "en",
-    //                 defaultAudioLanguage: "en"
-    //             },
-    //             status: {
-    //                 privacyStatus: "private"
-    //             }
-    //         },
-    //         media: {
-    //             // body: fs.createReadStream(video.filePath),
-    //             // body: ipcRenderer.sendSync("createReadStream", video.filePath),
-    //             body: videoFileStream
-    //         }
-    //     },
-    //     function (err, response) {
-    //         if (err) {
-    //             console.log("The API returned an error: " + err);
-    //             return;
-    //         }
-    //         console.log(response.data);
-    //         console.log("Video uploaded. Uploading the thumbnail now.");
-    //         service.thumbnails.set({
-    //                 auth: auth,
-    //                 videoId: response.data.id,
-    //                 media: {
-    //                     // body: fs.createReadStream(video.thumbnailPath)
-    //                     // body: ipcRenderer.sendSync("createReadStream", video.thumbnailPath),
-    //                     body: thumbnailFileStream
-    //                 }
-    //             },
-    //             function (err, response) {
-    //                 if (err) {
-    //                     console.log("The API returned an error: " + err);
-    //                     return;
-    //                 }
-    //                 console.log(response.data);
-    //             }
-    //         );
-    //     }
-    // );
 }
 
 /**
@@ -331,7 +223,7 @@ function getPlaylist(auth, playListIDQuery) {
             auth: auth,
             part: "contentDetails,status",
             playlistId: playListIDQuery,
-            maxResults: 30
+            maxResults: 60
             // mine: true
         },
         function (err, response) {

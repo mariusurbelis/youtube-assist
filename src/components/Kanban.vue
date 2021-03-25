@@ -1,5 +1,5 @@
 <template>
-    <div class="container justify-center">
+    <div class="container justify-center shadow pt-5 pb-5">
         <div class="row">
             <div v-for="column in columns" :key="column.status" class="col-4">
                 <h2>
@@ -7,18 +7,37 @@
                 </h2>
 
                 <draggable
+                    v-if="column.status !== 0"
                     :list="column.videos"
                     :animation="200"
                     ghost-class="ghost-card"
                     group="videos"
                     @end="saveVideos"
                 >
-                    <KanbanVideoCard
+                    <!-- v-if="typeof video.status" -->
+                    <div v-for="video in column.videos" :key="video.id">
+                        <KanbanVideoCard
+                            :video="video"
+                            class="mt-3 cursor-move"
+                        />
+                    </div>
+                </draggable>
+
+                <draggable
+                    v-else
+                    :list="column.videos"
+                    :animation="200"
+                    ghost-class="ghost-card"
+                    group="videos"
+                    @end="convertToVideo"
+                >
+                    <div
                         v-for="video in column.videos"
-                        :key="video.id"
-                        :video="video"
-                        class="mt-3 cursor-move"
-                    />
+                        :key="video.idea"
+                        class="mt-3 cursor-move pt-3 pb-3 shadow rounded-lg"
+                    >
+                        {{ video.idea }}
+                    </div>
                 </draggable>
             </div>
         </div>
@@ -64,16 +83,32 @@ export default {
     },
     methods: {
         loadVideoList() {
-            this.columns[0].videos = DB.getAllVideosOfStatus(0);
+            // this.columns[0].videos = DB.getAllVideosOfStatus(0);
+
+            DB.loadIdeas().then((loadedIdeas) => {
+                this.columns[0].videos = loadedIdeas;
+            });
+
             this.columns[1].videos = DB.getAllVideosOfStatus(1);
             this.columns[2].videos = DB.getAllVideosOfStatus(2);
             //this.videos1 = DB.getAllVideosOfStatus(1);
         },
         saveVideos() {
-            for (var i = 0; i < 3; i++) {
+            for (var i = 1; i < 3; i++) {
                 this.columns[i].videos.forEach((videoElement) => {
                     videoElement.status = i;
                     DB.saveVideo(videoElement);
+                });
+            }
+        },
+        convertToVideo() {
+            for (var i = 1; i < 3; i++) {
+                this.columns[i].videos.forEach((videoElement) => {
+                    if (typeof videoElement.status === "undefined")
+                        DB.convertIdeaToVideo(videoElement, i);
+
+                    // videoElement.status = i;
+                    // DB.saveVideo(videoElement);
                 });
             }
         }

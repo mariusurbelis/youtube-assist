@@ -1,8 +1,10 @@
 <template>
-    <div class="container shadow-sm p-5">
+    <div class="container shadow mb-5 p-5">
         <div class="row mb-5">
             <div class="col-12"><h1>Single Video Page</h1></div>
         </div>
+
+        <div v-if="uploadStatus === ''">{{ uploadStatus }}</div>
 
         <div class="row">
             <div class="col-12">
@@ -103,7 +105,7 @@
                 {{ video.thumbnailPath }}
             </div>
         </div>
-        <img :src="video.thumbnailPath" style="width: 100%" />
+        <img :src="video.thumbnailPath" style="width: 20%" />
 
         <div class="row">
             <div class="col-6">
@@ -166,7 +168,8 @@ export default {
     data() {
         return {
             video: "",
-            filePath: ""
+            filePath: "",
+            uploadStatus: ""
         };
     },
     beforeCreate() {
@@ -180,6 +183,10 @@ export default {
         this.clearVideoScreen();
 
         EventBus.$on("clearVideo", this.clearVideoScreen);
+
+        ipcRenderer.on("videoStatus", (status) => {
+            this.uploadStatus = status;
+        });
 
         ipcRenderer.on("videoUploaded", () => {
             let instance = this.$toast.open(`Video upload succesfull`);
@@ -224,9 +231,10 @@ export default {
             DB.saveVideo(this.video);
         },
         uploadVideo() {
-            EventBus.$emit("uploadVideo", this.video);
+            // EventBus.$emit("uploadVideo", this.video);
             //window.ipcRenderer.send("upload", this.video);
             // ipcRenderer.send("upload", this.video);
+            ipcRenderer.send("upload", this.video);
         },
         handleFileChange(e) {
             var file = e.target.files[0];

@@ -1,9 +1,12 @@
 <template>
-    <div class="bg-white shadow rounded-lg pt-3 pb-3">
+    <div
+        v-if="typeof video.status !== `undefined`"
+        class="bg-white shadow rounded-lg pt-3 pb-3"
+    >
         <div class="col-12">
             <b>{{ video.title }}</b
             ><br />
-            {{ truncateString(video.description, 15) }}
+            {{ truncateString(video.description, 36) }}
         </div>
     </div>
 </template>

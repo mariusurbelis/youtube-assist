@@ -276,14 +276,23 @@ export default class DatabaseManager {
         });
     }
 
-    convertIdeaToVideo(idea) {
+    convertIdeaToVideo(idea, status) {
         var newVideo = this.getEmptyVideo();
 
-        newVideo.title = `Converted idea`;
+
         newVideo.description = idea.idea;
+
+        newVideo.title = (newVideo.description < 15) ? newVideo.description : newVideo.description.slice(0, 15);
+
+        if (status) {
+            console.log("Status " + status);
+            newVideo.status = status;
+        }
 
         this.saveVideo(newVideo).then(() => {
             this.deleteIdea(idea);
+
+            EventBus.$emit("reloadData");
         });
     }
 

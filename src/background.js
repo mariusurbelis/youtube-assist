@@ -34,7 +34,6 @@ async function createWindow() {
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
             //nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION
             nodeIntegration: true,
-            // preload: path.join(__dirname, 'preload.js'),
             webSecurity: false
         },
         resizable: false
@@ -111,29 +110,32 @@ const userHome = require("user-home");
 var TOKEN_DIR = `${userHome}/Documents/YouTube Assist/`;
 var TOKEN_PATH = TOKEN_DIR + "auth.json";
 
-var currentEvent = null;
-
-ipcMain.on('upload', (event, auth, video) => {
-
-    console.log(`Uploading ${video.title} with ${auth.credentials.access_token}`);
-    // event.sender.send('pong', Math.random());
-
-    currentEvent = event;
-
+ipcMain.on('upload', (event, video) => {
     fs.readFile("client_secret.json", function processClientSecrets(err, content) {
         if (err) {
             console.log("Error loading client secret file: " + err);
             return;
         }
-        clientSecret = JSON.parse(content);
-        // Authorize a client with the loaded credentials, then call the YouTube API.
-        authorizeUpload(JSON.parse(content), video);
+
+        var credentials = JSON.parse(content);
+
+        var clientSecret = credentials.installed.client_secret;
+        var clientId = credentials.installed.client_id;
+        var redirectUrl = credentials.installed.redirect_uris[0];
+
+        var oauth2Client = new OAuth2(clientId, clientSecret, redirectUrl);
+
+        // Check if we have previously stored a token.
+        fs.readFile(TOKEN_PATH, function (err, token) {
+            if (err) {
+                console.log("Video upload auth error occured");
+                //getNewToken(oauth2Client, callback);
+            } else {
+                oauth2Client.credentials = JSON.parse(token);
+                uploadVideo(oauth2Client, video, event);
+            }
+        });
     });
-
-
-
-
-    //uploadVideo(auth, video, event);
 });
 
 const fs = require("fs");
@@ -153,7 +155,7 @@ var clientSecret = null;
 function uploadVideo(auth, video, event) {
     const service = google.youtube("v3");
 
-    event = currentEvent;
+    event.reply("videoStatus", "Uploading the video...");
 
     service.videos.insert({
             auth: auth,
@@ -183,7 +185,8 @@ function uploadVideo(auth, video, event) {
             }
             //console.log(response.data);
 
-            event.reply("videoUploaded");
+            //event.reply("videoUploaded");
+            event.reply("videoStatus", "Uploading the thumbnail...");
 
             console.log("Video uploaded. Uploading the thumbnail now.");
             service.thumbnails.set({
@@ -199,59 +202,14 @@ function uploadVideo(auth, video, event) {
                         console.log("The API returned an error: " + err);
                         return;
                     }
-                    console.log(response.data);
+                    event.reply("videoStatus", "Uploading done");
+                    event.reply("videoUploaded");
+
+                    //console.log(response.data);
                 }
             );
         }
     );
 }
-
-
-
-
-function authorizeUpload(credentials, video) {
-    var clientSecret = credentials.installed.client_secret;
-    var clientId = credentials.installed.client_id;
-    var redirectUrl = credentials.installed.redirect_uris[0];
-
-    var oauth2Client = new OAuth2(clientId, clientSecret, redirectUrl);
-
-    // console.log(TOKEN_PATH);
-
-    // if (!uploadsInitialized) {
-    //     EventBus.$on("uploadVideo", video => {
-    //         sendVideoForUpload(video);
-    //     });
-    //     uploadsInitialized = true;
-    // }
-
-    // Check if we have previously stored a token.
-    fs.readFile(TOKEN_PATH, function (err, token) {
-        if (err) {
-            console.log("Video upload auth error occured");
-            //getNewToken(oauth2Client, callback);
-        } else {
-            oauth2Client.credentials = JSON.parse(token);
-            uploadVideo(oauth2Client, video);
-        }
-    });
-}
-
-
-
-
-
-
-ipcMain.on('createReadStream', (event, filePath) => {
-    console.log(filePath) // prints "ping"
-
-    var readStream = fs.createReadStream(filePath);
-
-    readStream.on('open', () => {
-        event.returnValue = readStream;
-
-    });
-
-})
 
 // -----------------------
