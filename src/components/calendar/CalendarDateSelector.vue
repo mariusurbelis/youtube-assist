@@ -2,10 +2,14 @@
     <div class="calendar-date-selector">
         <span class="rounded" @click="selectPrevious">
             <font-awesome-icon icon="angle-left" />
+            <font-awesome-icon class="ml-2" icon="calendar-minus" />
         </span>
-        <span class="rounded" @click="selectCurrent">Today</span>
+        <span class="rounded" @click="selectCurrent"
+            >Today <font-awesome-icon icon="calendar-day"
+        /></span>
         <span class="rounded" @click="selectNext">
-            <font-awesome-icon icon="angle-right" />
+            <font-awesome-icon icon="calendar-plus" />
+            <font-awesome-icon class="ml-2" icon="angle-right" />
         </span>
     </div>
 </template>

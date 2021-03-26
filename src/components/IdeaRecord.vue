@@ -4,7 +4,9 @@
             <div class="col-10">
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Idea</span>
+                        <span class="input-group-text"
+                            ><font-awesome-icon icon="lightbulb"
+                        /></span>
                     </div>
                     <textarea
                         style="height: 100%"

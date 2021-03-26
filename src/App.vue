@@ -18,18 +18,31 @@
         ></loading>
 
         <div
-            class="fixed-bottom row text-center justify-content-center"
-            style="height: 3em"
+            class="fixed-bottom row text-center justify-content-center p-3 bg-dark"
         >
-            <button class="col-3" v-on:click="openDashboardScreen">
-                Dashboard
+            <button
+                class="col-2 p-3 btn-light btn"
+                v-on:click="openDashboardScreen"
+            >
+                Dashboard <font-awesome-icon icon="home" />
             </button>
-            <button class="col-3" v-on:click="openNewVideoScreen">
-                New Video
+            <button
+                class="col-2 offset-1 btn-light btn"
+                v-on:click="openNewVideoScreen"
+            >
+                New Video <font-awesome-icon icon="plus" />
             </button>
-            <button class="col-3" v-on:click="openKanbanScreen">Kanban</button>
-            <button class="col-3" v-on:click="openVideoListScreen">
-                Video List
+            <button
+                class="col-2 offset-1 btn-light btn"
+                v-on:click="openKanbanScreen"
+            >
+                Kanban <font-awesome-icon icon="columns" />
+            </button>
+            <button
+                class="col-2 offset-1 btn-light btn"
+                v-on:click="openVideoListScreen"
+            >
+                Video List <font-awesome-icon icon="list" />
             </button>
         </div>
     </div>
@@ -48,9 +61,6 @@ import Kanban from "./components/Kanban.vue";
 import Loading from "vue-loading-overlay";
 // Import loading stylesheet
 import "vue-loading-overlay/dist/vue-loading.css";
-
-// Required for authentication
-require("./classes/YouTubeAPI");
 
 export default {
     name: "App",
@@ -76,7 +86,7 @@ export default {
             this.openVideoScreen();
         });
 
-        EventBus.$on("saveAuthURL", () => {
+        EventBus.$on("stopLoadingScreen", () => {
             this.isLoading = false;
         });
 

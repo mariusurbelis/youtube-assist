@@ -7,7 +7,7 @@
                     id="dropdown-dropright"
                     dropright
                     :text="`Videos to show (${videoCount})`"
-                    variant="primary"
+                    variant="dark"
                     class="m-2"
                 >
                     <b-dropdown-item @click="setVideoCount(3)"

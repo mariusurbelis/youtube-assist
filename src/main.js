@@ -30,15 +30,29 @@ import {
     faPhotoVideo,
     faAngleLeft,
     faAngleRight,
-    faExternalLinkAlt
+    faExternalLinkAlt,
+    faPlus,
+    faList,
+    faHome,
+    faColumns,
+    faCalendarDay,
+    faLightbulb,
+    faCalendarPlus,
+    faCalendarMinus
 } from '@fortawesome/free-solid-svg-icons'
 import {
     FontAwesomeIcon
 } from '@fortawesome/vue-fontawesome'
 
-library.add(faTrash, faSave, faCloudUploadAlt, faPhotoVideo, faAngleLeft, faAngleRight, faExternalLinkAlt)
+library.add(
+    faTrash, faSave, faCloudUploadAlt,
+    faPhotoVideo, faAngleLeft, faAngleRight,
+    faExternalLinkAlt, faPlus, faList,
+    faHome, faColumns, faCalendarDay,
+    faLightbulb, faCalendarPlus, faCalendarMinus
+);
 
-Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 import VueToast from 'vue-toast-notification';
 // Import one of the available themes
@@ -50,6 +64,9 @@ Vue.use(VueToast);
 new Vue({
     render: h => h(App)
 }).$mount("#app");
+
+// Required for authentication
+require("./classes/YouTubeAPI");
 
 // GLOBAL METHODS
 Vue.mixin({

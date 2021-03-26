@@ -56,7 +56,10 @@ export default {
     },
     methods: {
         authenticate() {
-            if (this.token !== "") EventBus.$emit("authYouTubeAPI", this.token);
+            if (this.token !== "") {
+                EventBus.$emit("authYouTubeAPI", this.token);
+                console.log("Emitting auth");
+            }
         },
         startAuth() {
             if (this.authurl !== "") {
@@ -65,6 +68,8 @@ export default {
                 shell.openExternal(this.authurl);
 
                 this.browseropened = true;
+            } else {
+                console.error("Log url exists");
             }
         }
     }

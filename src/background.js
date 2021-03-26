@@ -28,6 +28,7 @@ async function createWindow() {
     const win = new BrowserWindow({
         width: 1280,
         height: 900,
+        // frame: false,
         title: "YouTube Assist Desktop",
         webPreferences: {
             // Use pluginOptions.nodeIntegration, leave this alone
@@ -38,6 +39,8 @@ async function createWindow() {
         },
         resizable: false
     });
+
+    win.removeMenu();
 
     win.on("page-title-updated", event => event.preventDefault());
 

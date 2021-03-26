@@ -22,8 +22,8 @@ var SCOPES = [
     "https://www.googleapis.com/auth/youtube.readonly",
     "https://www.googleapis.com/auth/youtube.upload"
 ];
-var TOKEN_DIR = `${userHome}/Documents/YouTube Assist/`;
-var TOKEN_PATH = TOKEN_DIR + "auth.json";
+var DATA_DIR = `${userHome}/Documents/YouTube Assist/`;
+var TOKEN_PATH = DATA_DIR + "auth.json";
 
 // console.log("YouTube API Script Initiated");
 
@@ -41,6 +41,7 @@ setInterval(function () {
 var fileWritesLeft = 4;
 var uploadsInitialized = false;
 var uploadingVideo = false;
+var isAuthorized = false;
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -63,6 +64,7 @@ function authorize(credentials, callback) {
         } else {
             oauth2Client.credentials = JSON.parse(token);
             EventBus.$emit("authSuccess");
+            isAuthorized = true;
             callback(oauth2Client);
         }
     });
@@ -82,16 +84,45 @@ function dataLoadFinished() {
     EventBus.$emit("reloadData");
 }
 
-var clientSecret = null;
 
 function pullDataFromAPI() {
+    var lastPullFilePath = `${DATA_DIR}YouTube API/last_data_pull`;
+    var timeNow = new Date().valueOf();
+
+    if (fs.existsSync(lastPullFilePath)) {
+        var timePulled = fs.readFileSync(lastPullFilePath);
+        if ((timeNow - timePulled) / 1000 < 60) {
+            console.log("Pulled less than a minute ago");
+
+            if (!isAuthorized) {
+                readFile("client_secret.json", function processClientSecrets(err, content) {
+                    if (err) {
+                        console.log("Error loading client secret file: " + err);
+                        return;
+                    }
+                    authorize(JSON.parse(content), () => {
+                        setTimeout(() => {
+                            EventBus.$emit("stopLoadingScreen");
+                        }, 500);
+                    });
+                });
+            }
+            return;
+        } else {
+            console.log("Pulled more than a minute.");
+        }
+    } else {
+        writeFile(lastPullFilePath, timeNow, () => {});
+    }
+
     readFile("client_secret.json", function processClientSecrets(err, content) {
         if (err) {
             console.log("Error loading client secret file: " + err);
             return;
         }
-        clientSecret = JSON.parse(content);
         // Authorize a client with the loaded credentials, then call the YouTube API.
+        console.log("Pulling data...");
+        writeFile(lastPullFilePath, timeNow, () => {});
         authorize(JSON.parse(content), getChannel);
     });
 }
@@ -113,8 +144,10 @@ function getNewToken(oauth2Client, callback) {
     console.log("Authorize this app by visiting this url: ", authUrl);
 
     EventBus.$emit("saveAuthURL", authUrl);
+    EventBus.$emit("stopLoadingScreen");
 
     EventBus.$on("authYouTubeAPI", code => {
+        console.log("Receiving authYouTubeAPI");
         oauth2Client.getToken(code, function (err, token) {
             if (err) {
                 console.log("Error while trying to retrieve access token", err);
@@ -137,7 +170,7 @@ function getNewToken(oauth2Client, callback) {
  */
 function storeToken(token) {
     try {
-        mkdirSync(TOKEN_DIR);
+        mkdirSync(DATA_DIR);
     } catch (err) {
         if (err.code != "EEXIST") {
             throw err;
