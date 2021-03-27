@@ -38,7 +38,8 @@ import {
     faCalendarDay,
     faLightbulb,
     faCalendarPlus,
-    faCalendarMinus
+    faCalendarMinus,
+    faLongArrowAltRight
 } from '@fortawesome/free-solid-svg-icons'
 import {
     FontAwesomeIcon
@@ -49,7 +50,8 @@ library.add(
     faPhotoVideo, faAngleLeft, faAngleRight,
     faExternalLinkAlt, faPlus, faList,
     faHome, faColumns, faCalendarDay,
-    faLightbulb, faCalendarPlus, faCalendarMinus
+    faLightbulb, faCalendarPlus, faCalendarMinus,
+    faLongArrowAltRight, faPhotoVideo
 );
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
@@ -115,6 +117,16 @@ Vue.mixin({
                 return str;
             }
             return str.slice(0, num) + "...";
+        },
+        toast(toastMessage, toastTimeout, type) {
+            let instance = this.$toast.open({
+                message: toastMessage,
+                type: (type) ? type : "success"
+            });
+
+            setTimeout(() => {
+                instance.dismiss();
+            }, (toastTimeout) ? toastTimeout * 1000 : 3000);
         }
     }
 });

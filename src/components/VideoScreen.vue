@@ -189,20 +189,11 @@ export default {
         });
 
         ipcRenderer.on("videoUploaded", () => {
-            let instance = this.$toast.open(`Video upload succesfull`);
-            setTimeout(() => {
-                instance.dismiss();
-            }, 5000);
+            this.toast("Video upload succesfull", 5);
         });
 
         ipcRenderer.on("videoUploadError", () => {
-            let instance = this.$toast.open({
-                message: "Video upload error",
-                type: "error"
-            });
-            setTimeout(() => {
-                instance.dismiss();
-            }, 5000);
+            this.toast("Video upload error", 5, "error");
         });
     },
     methods: {
@@ -278,12 +269,8 @@ export default {
                 //var successful = document.execCommand("copy");
                 //var msg = successful ? "successful" : "unsuccessful";
                 //alert("Testing code was copied " + msg);
-                let instance = this.$toast.open(
-                    `Copy of ${copySelection[id]} succesfull`
-                );
-                setTimeout(() => {
-                    instance.dismiss();
-                }, 1000);
+
+                this.toast(`Copy of ${copySelection[id]} succesfull`, 1);
             } catch (err) {
                 //alert("Oops, unable to copy");
             }

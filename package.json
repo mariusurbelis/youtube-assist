@@ -20,6 +20,7 @@
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.6.5",
     "dayjs": "^1.10.4",
+    "ffmpeg-progress-wrapper": "^2.0.1",
     "google-auth-library": "^7.0.2",
     "googleapis": "^67.1.1",
     "jquery": "^3.5.1",

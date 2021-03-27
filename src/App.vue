@@ -21,28 +21,34 @@
             class="fixed-bottom row text-center justify-content-center p-3 bg-dark"
         >
             <button
-                class="col-2 p-3 btn-light btn"
+                class="col-2 p-3 m-1 btn-light btn"
                 v-on:click="openDashboardScreen"
             >
                 Dashboard <font-awesome-icon icon="home" />
             </button>
             <button
-                class="col-2 offset-1 btn-light btn"
+                class="col-2 m-1 btn-light btn"
                 v-on:click="openNewVideoScreen"
             >
                 New Video <font-awesome-icon icon="plus" />
             </button>
             <button
-                class="col-2 offset-1 btn-light btn"
+                class="col-2 m-1 btn-light btn"
                 v-on:click="openKanbanScreen"
             >
                 Kanban <font-awesome-icon icon="columns" />
             </button>
             <button
-                class="col-2 offset-1 btn-light btn"
+                class="col-2 m-1 btn-light btn"
                 v-on:click="openVideoListScreen"
             >
                 Video List <font-awesome-icon icon="list" />
+            </button>
+            <button
+                class="col-2 m-1 btn-light btn"
+                v-on:click="openVideoManipulationScreen"
+            >
+                Video Converter <font-awesome-icon icon="photo-video" />
             </button>
         </div>
     </div>
@@ -56,6 +62,7 @@ import DatabaseManager from "./classes/DatabaseManager";
 import AuthScreen from "./components/AuthScreen";
 import { EventBus } from "./main";
 import Kanban from "./components/Kanban.vue";
+import VideoManipulation from "./components/VideoManipulation";
 
 // Import loading component
 import Loading from "vue-loading-overlay";
@@ -68,6 +75,7 @@ export default {
         Dashboard,
         VideoList,
         VideoScreen,
+        VideoManipulation,
         AuthScreen,
         DatabaseManager,
         Kanban,
@@ -117,6 +125,9 @@ export default {
             this.component = Dashboard;
             EventBus.$emit("reloadData");
         },
+        openVideoManipulationScreen() {
+            this.component = VideoManipulation;
+        },
         initializeScreens() {
             this.$nextTick(() => {
                 this.openVideoScreen();
@@ -128,7 +139,9 @@ export default {
                             this.component = Dashboard;
                             this.$nextTick(() => {
                                 setTimeout(() => (this.isLoading = false), 500);
-                                // console.log("Screens initialized");
+                                console.log(
+                                    "Screens initialized and unsubscribed"
+                                );
                                 EventBus.$off(
                                     "initializeScreens",
                                     this.initializeScreens

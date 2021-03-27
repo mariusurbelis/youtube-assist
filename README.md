@@ -34,6 +34,10 @@ npm run electron:build --win nsis
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+### FFmpeg
+
+The video/audio conversion feature relies on [FFmpeg](https://github.com/FFmpeg/FFmpeg). An executable named "ffmpeg.exe" should be placed in the root of the project directory.
+
 ### YouTube Assist
 
 More info about the project will be available at [urbelis.dev/youtube-assist](https://urbelis.dev/youtube-assist/)

@@ -95,6 +95,7 @@ function pullDataFromAPI() {
             console.log("Pulled less than a minute ago");
 
             if (!isAuthorized) {
+                EventBus.$emit("initializeScreens");
                 readFile("client_secret.json", function processClientSecrets(err, content) {
                     if (err) {
                         console.log("Error loading client secret file: " + err);

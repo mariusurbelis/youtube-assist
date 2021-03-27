@@ -216,3 +216,106 @@ function uploadVideo(auth, video, event) {
 }
 
 // -----------------------
+
+// VIDEO CONVERTER
+
+import {
+    FFMpegProgress
+} from 'ffmpeg-progress-wrapper';
+
+const {
+    dialog
+} = require("electron");
+
+ipcMain.on('selectConvertDestination', (event) => {
+    dialog.showOpenDialog({
+        properties: ["openFile", "openDirectory"]
+    }).then((destination) => {
+        event.reply('convertDestinationSelected', destination);
+    });
+});
+
+ipcMain.on('convert', (event, data) => {
+
+    var args = [
+        '-y',
+        '-i', `${data.filePath}`,
+        '-f', `${data.format}`, `${data.fileDestination}/${data.newFileName}.${data.format}`
+    ];
+
+
+    (async () => {
+
+        const process = new FFMpegProgress(args, {
+            cmd: "ffmpeg.exe"
+        });
+
+        // process.on('raw', console.log);
+
+        process.once('details', (details) => {
+            console.log(JSON.stringify(details))
+        });
+
+        process.once('progress', () => {
+            event.reply("fileConversionStarted");
+        });
+
+        process.on('progress', (progress) => {
+            progress.progress *= 1000;
+            progress.progress = Math.round(progress.progress * 100) / 100;
+            // console.log(JSON.stringify(progress));
+            // console.log(progress.progress);
+            event.reply("fileConversionStatus", progress);
+        });
+
+        // TODO: handle file exists
+
+        process.once('end', (exitCode) => {
+            if (exitCode === 0) event.reply("fileConversionDone");
+        });
+
+        await process.onDone();
+
+    })();
+
+    return;
+
+    // const process = require('child_process');
+
+    var spawn = require('child_process').spawn;
+
+    // process.exec(`ffmpeg.exe -i "${filePath}" "converted_file.${format}"`, function (error, stdout, stderr) {
+    //     console.log('stdout: ' + stdout);
+    //     if (error) console.log('exec error: ' + error);
+    // });
+
+
+    var cmd = 'ffmpeg.exe';
+
+    var args = [
+        '-y',
+        '-hide_banner',
+        '-i', `${filePath}`,
+        '-f', `${format}`, `output.${format}`
+    ];
+
+    var proc = spawn(cmd, args);
+
+    proc.stdout.on('data', function (data) {
+        console.log(data);
+    });
+
+    proc.stderr.setEncoding("utf8")
+    proc.stderr.on('data', function (data) {
+        console.log(data);
+    });
+
+    proc.on('close', function () {
+        console.log('finished');
+    });
+
+
+
+});
+
+// ---------------

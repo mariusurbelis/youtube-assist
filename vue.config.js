@@ -5,10 +5,16 @@ module.exports = {
                 productName: "YouTube Assist Desktop",
                 // nodeIntegration: true
                 extraFiles: [{
-                    from: "client_secret.json",
-                    to: "client_secret.json",
-                    filter: ["**/*"]
-                }]
+                        from: "client_secret.json",
+                        to: "client_secret.json",
+                        filter: ["**/*"]
+                    },
+                    {
+                        from: "ffmpeg.exe",
+                        to: "ffmpeg.exe",
+                        filter: ["**/*"]
+                    },
+                ]
             }
         }
     },
