@@ -1,15 +1,17 @@
 
 <template>
-    <div class="container mb-5">
-        <div class="row">
-            <div class="col-12 shadow p-4 rounded-lg">
+    <div class="container-fluid mb-5">
+        <div class="row mb-4">
+            <div class="col-12">
                 <h1>Video List</h1>
             </div>
         </div>
 
-        <div v-for="video in videos" v-bind:key="video.title">
+        <div class="row">
             <VideoListItem
-                class="shadow p-4 mt-4 rounded-lg"
+                class="shadow p-4 mt-4 rounded-lg col-5"
+                v-for="video in videos"
+                v-bind:key="video.title"
                 v-bind:title="video.title"
                 v-bind:description="video.description"
                 v-bind:tags="video.tags"

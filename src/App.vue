@@ -156,4 +156,14 @@ export default {
 body {
     padding-bottom: 70px;
 }
+
+::-webkit-scrollbar {
+    background-color: #343a40;
+    width: 0.8em;
+}
+
+::-webkit-scrollbar-thumb:window-inactive,
+::-webkit-scrollbar-thumb {
+    background: black;
+}
 </style>

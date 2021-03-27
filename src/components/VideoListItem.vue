@@ -2,19 +2,23 @@
     <div class="container text-left">
         <div class="row">
             <div class="col-12">
-                <h3>Title: {{ video.title }}</h3>
+                <h3>{{ video.title }}</h3>
             </div>
         </div>
         <div class="row">
-            <div class="col-6">
+            <div class="col-7">
                 Description:<br />{{ truncateString(video.description, 50) }}
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 Tags:<br />{{ truncateString(video.tags, 50) }}
             </div>
         </div>
         <div class="row mt-3">
-            <div class="col-6">
+            <div class="col-12">
+                Created: {{ timeConverter(video.created) }}
+            </div>
+            <div class="col-12">Status: {{ videoStatus(video.status) }}</div>
+            <div class="col-12 text-right mt-2">
                 <button
                     v-on:click="loadVideo(video.id)"
                     class="btn btn-primary"
@@ -27,12 +31,6 @@
                 >
                     <font-awesome-icon icon="trash" />
                 </button>
-            </div>
-            <div class="col-6">
-                Created:<br />{{ timeConverter(video.created) }}
-            </div>
-            <div class="col-6">
-                Status:<br />{{ videoStatus(video.status) }}
             </div>
         </div>
     </div>
