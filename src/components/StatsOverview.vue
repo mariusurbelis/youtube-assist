@@ -35,7 +35,7 @@
                     <div class="col-12 statsName">Streak</div>
                 </div>
                 <div class="row">
-                    <div class="col-12 statsNumber">X</div>
+                    <div class="col-12 statsNumber">{{ uploadStreak }}</div>
                 </div>
             </div>
 
@@ -73,7 +73,8 @@ export default {
             videoCount: "",
             viewCount: "",
             uploadsLastMonth: 0,
-            uploadsThisMonth: 0
+            uploadsThisMonth: 0,
+            uploadStreak: 0
         };
     },
     beforeCreate() {
@@ -97,7 +98,6 @@ export default {
                     this.subscriberCount = this.stats.statistics.subscriberCount;
                     this.videoCount = this.stats.statistics.videoCount;
                     this.viewCount = this.stats.statistics.viewCount;
-                    // console.log(`Loading stats`);
                 }
             );
 
@@ -105,6 +105,7 @@ export default {
                 // console.log(stats);
                 this.uploadsLastMonth = stats.uploadsLastMonth;
                 this.uploadsThisMonth = stats.uploadsThisMonth;
+                this.uploadStreak = stats.uploadStreak;
             });
         }
     }
