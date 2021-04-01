@@ -1,6 +1,6 @@
 <template>
     <div class="container shadow mb-5 p-5">
-        <div class="row mb-5">
+        <div hidden class="row mb-5">
             <div class="col-12"><h1>Single Video Page</h1></div>
         </div>
 
@@ -78,11 +78,13 @@
         <input type="hidden" id="video-tags-copy" :value="video.tags" />
 
         <div class="row mt-3">
-            <div class="text-left col-12">
-                <p>ID: {{ video.id }}</p>
+            <div class="text-left col-6">
                 <p v-if="timeConverter">
                     Created: {{ timeConverter(video.created) }}
                 </p>
+            </div>
+            <div class="col-6 text-right">
+                <p>ID: {{ video.id }}</p>
 
                 <div hidden class="input-group">
                     <div class="input-group-prepend">
@@ -100,7 +102,14 @@
         </div>
 
         <div class="row">
-            <div v-if="video.filePath" class="col-6">{{ video.filePath }}</div>
+            <div class="col-6">
+                <button
+                    class="btn btn-secondary"
+                    onclick="document.getElementById('chooseThumbnailFile').click()"
+                >
+                    Select thumbnail
+                </button>
+            </div>
             <div v-if="video.thumbnailPath" class="col-6">
                 {{ video.thumbnailPath }}
             </div>
@@ -116,14 +125,7 @@
                     Select video file
                 </button>
             </div>
-            <div class="col-6">
-                <button
-                    class="btn btn-secondary"
-                    onclick="document.getElementById('chooseThumbnailFile').click()"
-                >
-                    Select thumbnail
-                </button>
-            </div>
+            <div v-if="video.filePath" class="col-6">{{ video.filePath }}</div>
         </div>
 
         <input
@@ -140,22 +142,15 @@
             style="display: none"
         />
 
-        <div class="row mt-3">
-            <div class="col-12">
-                <button class="btn btn-primary col-4" v-on:click="saveData">
-                    <font-awesome-icon icon="save" />
-                    Save
-                </button>
-            </div>
-        </div>
-
-        <div class="row mt-3">
-            <div class="col-12">
-                <button class="btn btn-danger col-4" v-on:click="uploadVideo">
-                    <font-awesome-icon icon="cloud-upload-alt" />
-                    Upload Video
-                </button>
-            </div>
+        <div class="row mt-3 justify-content-center">
+            <button class="btn btn-primary col-4" v-on:click="saveData">
+                <font-awesome-icon icon="save" />
+                Save
+            </button>
+            <button v-if="video.filePath" class="btn btn-danger col-4 offset-1" v-on:click="uploadVideo">
+                <font-awesome-icon icon="cloud-upload-alt" />
+                Upload Video
+            </button>
         </div>
     </div>
 </template>

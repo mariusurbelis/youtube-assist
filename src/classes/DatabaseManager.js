@@ -343,7 +343,7 @@ export default class DatabaseManager {
 
                     data.forEach(video => {
                         var dateObj = new Date(video.snippet.publishedAt);
-                        dateObj.setHours(0, 0, 0, 0);
+                        //dateObj;
 
                         var month = ("0" + (dateObj.getUTCMonth() + 1)).slice(
                             -2
@@ -353,11 +353,17 @@ export default class DatabaseManager {
 
                         var videoDate = year + "-" + month;
 
-                        dates.push(dateObj);
+                        dates.push(dateObj.setHours(0, 0, 0, 0));
+
+                        // console.log(
+                        //     `${date.year +
+                        //         "-" +
+                        //         date.previousMonth} === ${videoDate}`
+                        // );
 
                         if (date.year + "-" + date.previousMonth === videoDate)
                             videosFromLastMonth.push(video);
-                        if (date.year + "-" + date.month === videoDate)
+                        else if (date.year + "-" + date.month === videoDate)
                             videosFromThisMonth.push(video);
                     });
 
