@@ -1,6 +1,19 @@
 {
   "name": "youtube-assist",
+  "author": {
+    "name": "Marius Urbelis",
+    "email": "marius@urbelis.dev",
+    "url": "https://mariusurbelis.com"
+  },
+  "licence": "GPLv3",
   "version": "0.1.0",
+  "description": "An application assisting YouTube content creators produce more consistent content",
+  "keywords": [
+    "youtube",
+    "video creators",
+    "productivity"
+  ],
+  "repository": "github:mariusurbelis/youtube-assist",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

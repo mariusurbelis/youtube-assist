@@ -7,7 +7,8 @@
         <div v-if="!browseropened" class="row mt-2">
             <div class="col-12 text-center mt-2">
                 <button v-on:click="startAuth()" class="btn btn-primary">
-                    Open Browser (Auth)
+                    <font-awesome-icon icon="external-link-alt" /> Open Browser
+                    (Auth)
                 </button>
             </div>
         </div>
