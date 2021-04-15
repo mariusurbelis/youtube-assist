@@ -78,6 +78,22 @@
         <input type="hidden" id="video-tags-copy" :value="video.tags" />
 
         <div class="row mt-3">
+            <div class="col-6">
+                Negative words in the title: {{ negativeWordsTitle }}
+            </div>
+            <div class="col-6">
+                Negative words in the description:
+                {{ negativeWordsDescription }}
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-3">
+            <button @click="checkForBadWords" class="btn btn-dark col-4">
+                Check for negative words
+            </button>
+        </div>
+
+        <div class="row mt-3">
             <div class="text-left col-6">
                 <p v-if="timeConverter">
                     Created: {{ timeConverter(video.created) }}
@@ -147,7 +163,11 @@
                 <font-awesome-icon icon="save" />
                 Save
             </button>
-            <button v-if="video.filePath" class="btn btn-danger col-4 offset-1" v-on:click="uploadVideo">
+            <button
+                v-if="video.filePath"
+                class="btn btn-danger col-4 offset-1"
+                v-on:click="uploadVideo"
+            >
                 <font-awesome-icon icon="cloud-upload-alt" />
                 Upload Video
             </button>
@@ -164,15 +184,16 @@ export default {
         return {
             video: "",
             filePath: "",
-            uploadStatus: ""
+            uploadStatus: "",
+            negativeWords: null,
+            negativeWordsTitle: 0,
+            negativeWordsDescription: 0
         };
     },
     beforeCreate() {
         EventBus.$on("loadVideoScreen", (videoID) => {
             this.loadData(videoID);
         });
-
-        // console.log("VideoScreen initialized");
     },
     created() {
         this.clearVideoScreen();
@@ -189,6 +210,10 @@ export default {
 
         ipcRenderer.on("videoUploadError", () => {
             this.toast("Video upload error", 5, "error");
+        });
+
+        DB.getNegativeWordsList().then((data) => {
+            this.negativeWords = data;
         });
     },
     methods: {
@@ -273,6 +298,45 @@ export default {
             /* unselect the range */
             testingCodeToCopy.setAttribute("type", "hidden");
             window.getSelection().removeAllRanges();
+        },
+        checkForBadWords() {
+            // console.log(this.negativeWords);
+
+            if (this.negativeWords === null) {
+                console.log("Error. Word list empty");
+            } else {
+                var title = this.video.title
+                    .toLowerCase()
+                    .replace(/\n/g, " ")
+                    .split(" ");
+                var description = this.video.description
+                    .toLowerCase()
+                    .replace(/\n/g, " ")
+                    .split(" ");
+
+                console.log(
+                    `Title: ${title.length}, Desc: ${description.length}`
+                );
+
+                this.negativeWordsTitle = 0;
+                this.negativeWordsDescription = 0;
+
+                if (this.video.title.length > 0) {
+                    title.forEach((element) => {
+                        if (this.negativeWords.includes(element)) {
+                            this.negativeWordsTitle++;
+                        }
+                    });
+                }
+
+                if (this.video.description.length > 0) {
+                    description.forEach((element) => {
+                        if (this.negativeWords.includes(element)) {
+                            this.negativeWordsDescription++;
+                        }
+                    });
+                }
+            }
         }
     }
 };

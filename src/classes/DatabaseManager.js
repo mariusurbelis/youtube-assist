@@ -373,9 +373,28 @@ export default class DatabaseManager {
                     var streak = summary({ dates });
                     stats.uploadStreak = streak.currentStreak;
 
-                    console.log(streak);
+                    // console.log(streak);
 
                     resolve(stats);
+                }
+            );
+        });
+    }
+
+    getNegativeWordsList() {
+        return new Promise(resolve => {
+            var request = require("request");
+            request.get(
+                "https://gist.githubusercontent.com/mkulakowski2/4289441/raw/dad8b64b307cd6df8068a379079becbb3f91101a/negative-words.txt",
+                function(error, response, body) {
+                    if (!error && response.statusCode == 200) {
+                        var wordsString = body;
+                        var words = wordsString.split(/\r?\n/);
+                        var negativeWords = words.splice(35, words.length);
+                        resolve(negativeWords);
+                    } else {
+                        console.log("Error occured");
+                    }
                 }
             );
         });

@@ -41,7 +41,7 @@ async function createWindow() {
         resizable: false
     });
 
-    win.removeMenu();
+    // win.removeMenu();
 
     win.on("page-title-updated", event => event.preventDefault());
 
