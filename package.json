@@ -40,7 +40,7 @@
     "jquery": "^3.6.0",
     "nedb": "^1.8.0",
     "user-home": "^2.0.0",
-    "vue": "^2.6.11",
+    "vue": "^2.6.13",
     "vue-loading-overlay": "^3.4.2",
     "vue-router": "^3.5.1",
     "vue-toast-notification": "^0.6.1",
