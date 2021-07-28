@@ -33,7 +33,7 @@
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.15.0",
     "date-streaks": "^1.2.1",
-    "dayjs": "^1.10.5",
+    "dayjs": "^1.10.6",
     "ffmpeg-progress-wrapper": "^2.0.1",
     "google-auth-library": "^7.1.2",
     "googleapis": "^67.1.1",
