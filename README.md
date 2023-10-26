@@ -54,6 +54,4 @@ The video/audio conversion feature relies on [FFmpeg](https://github.com/FFmpeg/
 
 ### YouTube Assist
 
-More info about the project will be available at [urbelis.dev/youtube-assist](https://urbelis.dev/youtube-assist/)
-
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-electricity.svg)](https://forthebadge.com)
