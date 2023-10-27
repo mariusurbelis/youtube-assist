@@ -38,7 +38,7 @@
     "ffmpeg-progress-wrapper": "^2.0.1",
     "google-auth-library": "^7.14.1",
     "googleapis": "^67.1.1",
-    "jquery": "^3.6.0",
+    "jquery": "^3.6.3",
     "nedb": "^1.8.0",
     "user-home": "^2.0.0",
     "vue": "^2.7.13",
